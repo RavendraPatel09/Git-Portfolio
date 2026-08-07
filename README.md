@@ -1,7 +1,7 @@
-# Ravendra Patel — Editorial Developer Portfolio
+# Ravendra Patel — Developer Portfolio v2
 
 > **Software Developer · Full-Stack & Systems**  
-> Bespoke, minimalist, editorial developer portfolio inspired by the quiet confidence and typography of [nitin.vision](https://nitin.vision/), built with 100% verified GitHub projects and zero fabrication.
+> Premium, animated, colorful-yet-minimal developer portfolio for Ravendra Patel. Built as a single, zero-dependency, production-ready `index.html` file inspired by [nitin.vision](https://nitin.vision/).
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
@@ -10,63 +10,58 @@
 
 ---
 
-## ⚡ Key Highlights
+## ⚡ Highlights & Features
 
-- **Obsidian Minimalist Aesthetic**: Dark theme (`#08090A`) paired with modern editorial typography (**Geist / Inter** display + **JetBrains Mono** monospace).
-- **100% Verified Project Showcase**: Every showcased project is linked directly to real public GitHub repositories and live deployments:
-  - **Saksham-Ai**: AI-powered career platform for persons with disabilities ([Live Demo](https://saksham-aiapp.vercel.app/) · [GitHub](https://github.com/RavendraPatel09/Saksham-Ai))
-  - **Medi-connect / MedicalRapidGo**: Full-stack medicine delivery & marketplace with FastAPI & WebSockets
-  - **Smart Bhopal Backend**: IoT smart city telemetry & municipal infrastructure
-  - **Tripmate**: All-in-one travel planner with AI itinerary generation
-  - **Complete DSA in C++ & Python**: Modular algorithmic problem-solving
-  - **AI Resume Analyzer**: ATS scoring & match engine
-  - **Crewly**: Video creator & freelancer collaboration platform
-  - **Where Is My Milk**: Hyper-local dairy marketplace & ledger
-- **Dynamic GitHub API + Fallback**: Fetches live public repositories in real-time from GitHub with `localStorage` caching and an instant offline fallback.
-- **Card Spotlight Micro-Interactions**: Cursor-following radial light accents on hover (`cubic-bezier(0.22, 1, 0.36, 1)` easing).
-- **Centralized Data Architecture**: Decoupled `data/portfolioData.js` data model for easy maintenance.
-- **Zero Heavy Dependencies**: Pure HTML5, CSS3, and ES6+ JavaScript. Fast load times and high accessibility (WCAG compliant).
-
----
-
-## 📁 Repository Structure
-
-```
-Git Portfolio/
-├── index.html            # Semantic HTML5 markup, SEO meta, ARIA labels, sections
-├── style.css             # Editorial typography, obsidian tokens, grid/spotlight, responsive
-├── script.js             # Interactions, scroll-spy, spotlight glow, dynamic GitHub API + fallback
-├── data/
-│   └── portfolioData.js  # Centralized data model (profile, projects, skills, now, timeline)
-└── README.md             # Documentation & deployment guide
-```
+- **Single-File Standalone Architecture**: Delivered completely in `index.html` (embedded CSS, inline SVG, and vanilla JavaScript). No npm, node_modules, build steps, or backend required.
+- **Obsidian Dark Aesthetics (#08090A)**: 75% dark neutral canvas with 5% strategic gradient accents (`#8B5CF6` Purple &rarr; `#06B6D4` Teal &rarr; `#EC4899` Pink).
+- **Animated Hero Heading**: Slow, fluid CSS animated gradient text on your name heading.
+- **Typewriter Effect Tagline**: Character-by-character animated typing rotating through verified truthful statements:
+  - *"Building things, learning systems, solving problems."*
+  - *"Building practical software."*
+  - *"Learning new technologies."*
+  - *"Exploring AI and backend systems."*
+  - *"Turning ideas into working projects."*
+- **Animated SVG Cat Mascot**: Handcrafted inline SVG mascot with gentle idle floating, natural eye blinking, tail swishing, and a `● while I code...` status badge.
+- **Glowing Interactive Skill Badges**: Structured matrix (Languages, Backend & APIs, Frontend & UI, Databases, Tools & Environment, Computer Science) with gradient hover borders and soft glows.
+- **100% Verified Project Showcase**:
+  1. **Saksham-Ai**: Accessible career platform with AI job matching ([Live Demo](https://saksham-aiapp.vercel.app/) · [GitHub](https://github.com/RavendraPatel09/Saksham-Ai))
+  2. **Medi-connect / MedicalRapidGo**: Medicine delivery platform with FastAPI & WebSockets ([GitHub](https://github.com/RavendraPatel09/Medi-connect))
+  3. **Smart Bhopal Backend**: Municipal IoT telemetry & smart city infrastructure ([GitHub](https://github.com/RavendraPatel09/smart_bhopal_backend))
+  4. **Tripmate**: All-in-one travel planner with AI itinerary generation ([GitHub](https://github.com/RavendraPatel09/Tripmate))
+  5. **AI Resume Analyzer**: ATS scoring & match engine ([GitHub](https://github.com/RavendraPatel09/Ai-Resume-analyzer))
+  6. **Complete DSA in C++ & Python**: Modular algorithmic problem-solving ([GitHub](https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp))
+  7. **Crewly**: Creator & freelancer collaboration network ([GitHub](https://github.com/RavendraPatel09/Crewly))
+  8. **Where Is My Milk**: Smart dairy marketplace & ledger ([GitHub](https://github.com/RavendraPatel09/Where-Is-My-Milk))
+- **Resilient GitHub Contribution Heatmap**: Dedicated *"Building in public"* section featuring your GitHub contribution graph with an automatic, styled SVG generator fallback so it never displays a broken image.
+- **Interactive Micro-Interactions**: Custom desktop cursor, card spotlight mouse reflections, smooth scroll-spy navigation, and one-click copy email with feedback toast.
+- **WCAG Accessibility & Reduced Motion**: Full `@media (prefers-reduced-motion: reduce)` support and visible focus outlines.
 
 ---
 
-## 🚀 Local Development & Preview
+## 🚀 Quick Start & Local Preview
 
-Open `index.html` directly in any web browser, or launch a lightweight local server:
+Simply open `index.html` directly in any web browser!
 
+Or run a local HTTP server:
 ```bash
 # Python 3
 python3 -m http.server 8000
 ```
-
-Then visit [http://localhost:8000](http://localhost:8000) in your browser.
+Then visit [http://localhost:8000](http://localhost:8000).
 
 ---
 
-## 🌐 Deploy to GitHub Pages (1 Minute)
+## 🌐 1-Minute GitHub Pages Deployment
 
-1. Commit and push your files:
+1. Commit and push:
    ```bash
    git add .
-   git commit -m "Deploy editorial developer portfolio"
+   git commit -m "Deploy Ravendra Patel portfolio v2"
    git push origin main
    ```
-2. Navigate to your repository on GitHub &rarr; **Settings** &rarr; **Pages**.
+2. In your repository on GitHub, navigate to **Settings** &rarr; **Pages**.
 3. Under **Build and deployment** &gt; **Branch**, select `main` (or `master`) and directory `/ (root)`.
-4. Click **Save**. Your portfolio is live immediately!
+4. Click **Save**. Your site will be live at `https://ravendrapatel09.github.io/Git-Portfolio/`.
 
 ---
 
