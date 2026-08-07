@@ -1,7 +1,7 @@
-# Ravendra Patel — Personal Developer Portfolio
+# Ravendra Patel — Editorial Developer Portfolio
 
-> **Software Developer & AI Systems Engineer**  
-> Near-black minimalist portfolio featuring high-performance backend systems, IoT projects, Data Structures & Algorithms repositories, and an interactive developer terminal.
+> **Software Developer · Full-Stack & Systems**  
+> Bespoke, minimalist, editorial developer portfolio inspired by the quiet confidence and typography of [nitin.vision](https://nitin.vision/), built with 100% verified GitHub projects and zero fabrication.
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
@@ -10,41 +10,63 @@
 
 ---
 
-## ⚡ Features
+## ⚡ Key Highlights
 
-- **Dark Obsidian Aesthetics**: Near-black (`#08090a`) theme with vibrant electric cyan and cyber emerald accents.
-- **Ultra-Fast & Zero Dependencies**: 100% vanilla HTML5, CSS3, and JavaScript — no build steps, node_modules, or external frameworks needed.
-- **Interactive Developer Terminal**: Fully functional embedded shell (`help`, `skills`, `projects`, `bio`, `contact`, `email`, `clear`, keyboard history).
-- **Responsive & Mobile-First**: Tested across mobile, tablet, and desktop viewports.
-- **Particle Mesh Background**: Lightweight canvas rendering with smooth node connections.
-- **One-Click Actions**: Instant "Copy Email" with feedback toasts and live social links.
-
----
-
-## 🚀 Quick Start & Local Preview
-
-To view the portfolio locally:
-
-1. Double-click `index.html` in your file manager to open it in any web browser.
-2. Or run a local HTTP server:
-   ```bash
-   python3 -m http.server 8000
-   ```
-   Then navigate to `http://localhost:8000`.
+- **Obsidian Minimalist Aesthetic**: Dark theme (`#08090A`) paired with modern editorial typography (**Geist / Inter** display + **JetBrains Mono** monospace).
+- **100% Verified Project Showcase**: Every showcased project is linked directly to real public GitHub repositories and live deployments:
+  - **Saksham-Ai**: AI-powered career platform for persons with disabilities ([Live Demo](https://saksham-aiapp.vercel.app/) · [GitHub](https://github.com/RavendraPatel09/Saksham-Ai))
+  - **Medi-connect / MedicalRapidGo**: Full-stack medicine delivery & marketplace with FastAPI & WebSockets
+  - **Smart Bhopal Backend**: IoT smart city telemetry & municipal infrastructure
+  - **Tripmate**: All-in-one travel planner with AI itinerary generation
+  - **Complete DSA in C++ & Python**: Modular algorithmic problem-solving
+  - **AI Resume Analyzer**: ATS scoring & match engine
+  - **Crewly**: Video creator & freelancer collaboration platform
+  - **Where Is My Milk**: Hyper-local dairy marketplace & ledger
+- **Dynamic GitHub API + Fallback**: Fetches live public repositories in real-time from GitHub with `localStorage` caching and an instant offline fallback.
+- **Card Spotlight Micro-Interactions**: Cursor-following radial light accents on hover (`cubic-bezier(0.22, 1, 0.36, 1)` easing).
+- **Centralized Data Architecture**: Decoupled `data/portfolioData.js` data model for easy maintenance.
+- **Zero Heavy Dependencies**: Pure HTML5, CSS3, and ES6+ JavaScript. Fast load times and high accessibility (WCAG compliant).
 
 ---
 
-## 🌐 Deploying to GitHub Pages (1 Minute)
+## 📁 Repository Structure
 
-1. Push this repository to GitHub:
+```
+Git Portfolio/
+├── index.html            # Semantic HTML5 markup, SEO meta, ARIA labels, sections
+├── style.css             # Editorial typography, obsidian tokens, grid/spotlight, responsive
+├── script.js             # Interactions, scroll-spy, spotlight glow, dynamic GitHub API + fallback
+├── data/
+│   └── portfolioData.js  # Centralized data model (profile, projects, skills, now, timeline)
+└── README.md             # Documentation & deployment guide
+```
+
+---
+
+## 🚀 Local Development & Preview
+
+Open `index.html` directly in any web browser, or launch a lightweight local server:
+
+```bash
+# Python 3
+python3 -m http.server 8000
+```
+
+Then visit [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+
+## 🌐 Deploy to GitHub Pages (1 Minute)
+
+1. Commit and push your files:
    ```bash
    git add .
-   git commit -m "Deploy minimalist developer portfolio"
+   git commit -m "Deploy editorial developer portfolio"
    git push origin main
    ```
-2. In your repository on GitHub, go to **Settings** &rarr; **Pages**.
-3. Under **Build and deployment** &gt; **Branch**, select `main` (or `master`) and folder `/ (root)`.
-4. Click **Save**. Your site will be live at `https://<username>.github.io/<repo-name>/`!
+2. Navigate to your repository on GitHub &rarr; **Settings** &rarr; **Pages**.
+3. Under **Build and deployment** &gt; **Branch**, select `main` (or `master`) and directory `/ (root)`.
+4. Click **Save**. Your portfolio is live immediately!
 
 ---
 
