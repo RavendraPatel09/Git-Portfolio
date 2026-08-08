@@ -1066,6 +1066,7 @@
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      position: relative;
     }
 
     .heatmap-title-row {
@@ -1084,18 +1085,76 @@
       position: relative;
     }
 
-    .heatmap-image-container img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      filter: hue-rotate(240deg) saturate(1.8) brightness(1.1); /* Theme chart toward purple/violet */
-    }
-
-    /* SVG Fallback Grid for Heatmap */
+    /* SVG Heatmap Grid */
     .svg-heatmap-grid {
       width: 100%;
       max-width: 820px;
       height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    .heatmap-cell {
+      transition: transform 0.15s ease, filter 0.15s ease, stroke 0.15s ease;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .heatmap-cell:hover, .heatmap-cell:focus {
+      stroke: #a78bfa;
+      stroke-width: 1.5px;
+      filter: brightness(1.35) drop-shadow(0 0 5px rgba(139, 92, 246, 0.6));
+    }
+
+    .heatmap-tooltip {
+      position: absolute;
+      padding: 0.4rem 0.75rem;
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #f5f5f5;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -100%) translateY(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+      z-index: 50;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .heatmap-tooltip.visible {
+      opacity: 1;
+      transform: translate(-50%, -100%) translateY(-10px);
+    }
+
+    .heatmap-footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--subtle);
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .heatmap-legend {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+    }
+
+    .legend-box {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: inline-block;
     }
 
     /* Live Public Repos Cards */
