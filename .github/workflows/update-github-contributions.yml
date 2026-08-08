@@ -1,0 +1,186 @@
+name: Update GitHub Contributions
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger anytime
+
+permissions:
+  contents: write
+
+jobs:
+  update-contributions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch and update contribution data
+        env:
+          GH_CONTRIBUTIONS_TOKEN: ${{ secrets.GH_CONTRIBUTIONS_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          node -e "
+          const fs = require('fs');
+
+          async function fetchGraphQL(token) {
+            const query = \`
+              query(\$username: String!) {
+                user(login: \$username) {
+                  contributionsCollection {
+                    contributionCalendar {
+                      totalContributions
+                      weeks {
+                        contributionDays {
+                          date
+                          contributionCount
+                          weekday
+                          contributionLevel
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            \`;
+
+            const levelMap = {
+              'NONE': 0,
+              'FIRST_QUARTILE': 1,
+              'SECOND_QUARTILE': 2,
+              'THIRD_QUARTILE': 3,
+              'FOURTH_QUARTILE': 4
+            };
+
+            const res = await fetch('https://api.github.com/graphql', {
+              method: 'POST',
+              headers: {
+                'Authorization': \`Bearer \${token}\`,
+                'Content-Type': 'application/json',
+                'User-Agent': 'GitHub-Contributions-Updater'
+              },
+              body: JSON.stringify({
+                query,
+                variables: { username: 'RavendraPatel09' }
+              })
+            });
+
+            if (!res.ok) throw new Error(\`GraphQL request failed: \${res.status} \${res.statusText}\`);
+            const json = await res.json();
+            if (json.errors) throw new Error(JSON.stringify(json.errors));
+
+            const calendar = json.data.user.contributionsCollection.contributionCalendar;
+            const weeks = calendar.weeks.map(w => ({
+              contributionDays: w.contributionDays.map(d => ({
+                date: d.date,
+                contributionCount: d.contributionCount,
+                weekday: d.weekday,
+                level: levelMap[d.contributionLevel] ?? (d.contributionCount > 0 ? 1 : 0)
+              }))
+            }));
+
+            return {
+              username: 'RavendraPatel09',
+              totalContributions: calendar.totalContributions,
+              updatedAt: new Date().toISOString(),
+              weeks
+            };
+          }
+
+          async function fetchPublicFallback() {
+            const res = await fetch('https://github.com/users/RavendraPatel09/contributions');
+            if (!res.ok) throw new Error(\`Fallback request failed: \${res.status}\`);
+            const text = await res.text();
+
+            const totalMatch = text.match(/([\\d,]+)\\s+contributions\\s+in the last year/);
+            const total = totalMatch ? parseInt(totalMatch[1].replace(/,/g, ''), 10) : 0;
+
+            const dayRegex = /<td[^>]*data-date=\"(\\d{4}-\\d{2}-\\d{2})\"[^>]*data-level=\"(\\d+)\"[^>]*>[\\s\\S]*?<tool-tip[^>]*>(.*?)<\\/tool-tip>/g;
+            let match;
+            const daysByDate = new Map();
+
+            while ((match = dayRegex.exec(text)) !== null) {
+              const date = match[1];
+              const level = parseInt(match[2], 10);
+              const tip = match[3];
+              let count = 0;
+              const cMatch = tip.match(/(\\d+)\\s+contribution/);
+              if (cMatch) count = parseInt(cMatch[1], 10);
+              const d = new Date(date + 'T00:00:00Z');
+              daysByDate.set(date, {
+                date,
+                contributionCount: count,
+                weekday: d.getUTCDay(),
+                level
+              });
+            }
+
+            const sortedDates = Array.from(daysByDate.keys()).sort();
+            const weeks = [];
+            let currentWeek = [];
+
+            for (const dateStr of sortedDates) {
+              const dayData = daysByDate.get(dateStr);
+              if (dayData.weekday === 0 && currentWeek.length > 0) {
+                weeks.push({ contributionDays: currentWeek });
+                currentWeek = [];
+              }
+              currentWeek.push(dayData);
+            }
+            if (currentWeek.length > 0) {
+              weeks.push({ contributionDays: currentWeek });
+            }
+
+            return {
+              username: 'RavendraPatel09',
+              totalContributions: total,
+              updatedAt: new Date().toISOString(),
+              weeks
+            };
+          }
+
+          async function run() {
+            const token = process.env.GH_CONTRIBUTIONS_TOKEN;
+            let data = null;
+
+            if (token && token.trim()) {
+              try {
+                console.log('Attempting GitHub GraphQL API...');
+                data = await fetchGraphQL(token);
+                console.log('GraphQL fetch successful! Total contributions:', data.totalContributions);
+              } catch (err) {
+                console.warn('GraphQL API failed, attempting public fallback:', err.message);
+              }
+            }
+
+            if (!data) {
+              console.log('Fetching via public contributions endpoint...');
+              data = await fetchPublicFallback();
+              console.log('Public fallback fetch successful! Total contributions:', data.totalContributions);
+            }
+
+            if (data && data.weeks && data.weeks.length > 0) {
+              fs.writeFileSync('github-contributions.json', JSON.stringify(data, null, 2), 'utf8');
+              console.log('Saved updated github-contributions.json');
+            } else {
+              throw new Error('Failed to retrieve contribution data.');
+            }
+          }
+
+          run().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          "
+
+      - name: Commit and push changes if updated
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add github-contributions.json
+          git diff --staged --quiet || (git commit -m "chore: update GitHub contribution data" && git push)
