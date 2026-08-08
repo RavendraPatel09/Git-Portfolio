@@ -3063,7 +3063,17 @@
     }
 
     /**
-     * 12. Full-Screen Running Pixel-Art White Cats Easter Egg
+     * 12. Full-Screen Free-Roaming Pixel-Art White Cats Easter Egg
+     * 
+     * Architecture & Features:
+     * - Free 2D Roaming across full viewport (natural non-linear wander paths)
+     * - Kinematic Steering & Waypoint Engine (Seek, Wander noise, Boundary steering, Separation)
+     * - Organic curved trajectories with smooth acceleration & angular damping
+     * - Read-only global cursor proximity detection (Normal cursor 100% untouched)
+     * - Sits for 2.5–4.5s upon cursor arrival, then stands up and resumes wandering
+     * - Multi-cat independent behavior (Max 1–3 on desktop, 0–1 on mobile)
+     * - Self-contained inline pixel-art SVGs (4 running frames + sitting frame)
+     * - Single RAF animation loop, resize-safe, garbage-collected, reduced-motion compliant
      */
     function initRunningCats() {
       if (typeof window === 'undefined') return;
@@ -3078,7 +3088,11 @@
       let animFrameId = null;
       let lastTime = performance.now();
 
-      // Read-only mouse coordinate tracker (global, never touches or alters cursor)
+      // Viewport dimensions (cached, updated on resize)
+      let vw = window.innerWidth;
+      let vh = window.innerHeight;
+
+      // Read-only mouse tracker (zero impact on system cursor)
       let mouseX = -9999;
       let mouseY = -9999;
 
@@ -3090,6 +3104,11 @@
       window.addEventListener('pointerleave', () => {
         mouseX = -9999;
         mouseY = -9999;
+      }, { passive: true });
+
+      window.addEventListener('resize', () => {
+        vw = window.innerWidth;
+        vh = window.innerHeight;
       }, { passive: true });
 
       function getCatSvg(variant) {
@@ -3217,34 +3236,40 @@
         `;
       }
 
-      function spawnCat(forceDirection = null) {
-        const isMobile = window.innerWidth < 640;
-        const maxCats = isMobile ? 1 : 3;
+      function chooseTarget(cat, now) {
+        const minX = cat.marginX;
+        const maxX = Math.max(minX + 50, vw - cat.marginX - cat.size);
+        const minY = cat.marginY;
+        const maxY = Math.max(minY + 50, vh - cat.marginY - cat.height);
 
+        cat.targetX = minX + Math.random() * (maxX - minX);
+        cat.targetY = minY + Math.random() * (maxY - minY);
+        cat.nextTargetTime = now + (3500 + Math.random() * 3800);
+      }
+
+      function createCat() {
+        const isMobile = vw < 640;
+        const maxCats = isMobile ? 1 : 3;
         if (cats.length >= maxCats) return;
         if (document.hidden) return;
 
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-
-        const direction = forceDirection || (Math.random() > 0.5 ? 'left-to-right' : 'right-to-left');
-        const variant = Math.floor(Math.random() * 3);
         const size = isMobile ? (26 + Math.random() * 4) : (32 + Math.random() * 8);
         const height = Math.round(size * (18 / 28));
+        const variant = Math.floor(Math.random() * 3);
+        const baseSpeed = isMobile ? (35 + Math.random() * 15) : (48 + Math.random() * 26);
+        const marginX = isMobile ? 30 : 65;
+        const marginY = isMobile ? 30 : 65;
 
-        // Safe vertical bounds
-        const minY = vh * 0.12;
-        const maxY = vh * 0.86;
-        const startY = minY + Math.random() * (maxY - minY);
-        const endY = startY + (Math.random() * 40 - 20);
+        // Spawn position in safe playground
+        const spawnX = marginX + Math.random() * Math.max(50, vw - 2 * marginX - size);
+        const spawnY = marginY + Math.random() * Math.max(50, vh - 2 * marginY - height);
 
-        const startX = direction === 'left-to-right' ? -70 : (vw + 70);
-        const endX = direction === 'left-to-right' ? (vw + 70) : -70;
-
-        const speed = 115 + Math.random() * 45; // 115 - 160 px/sec
+        const initialAngle = Math.random() * Math.PI * 2;
+        const vx = Math.cos(initialAngle) * baseSpeed;
+        const vy = Math.sin(initialAngle) * baseSpeed;
 
         const container = document.createElement('div');
-        container.className = `running-cat-container ${direction === 'right-to-left' ? 'running-cat-facing-left' : ''}`;
+        container.className = 'running-cat-container';
         container.style.width = `${Math.round(size)}px`;
         container.style.height = `${height}px`;
 
@@ -3257,138 +3282,253 @@
         container.appendChild(inner);
         layer.appendChild(container);
 
+        // Smooth fade-in
+        requestAnimationFrame(() => {
+          container.classList.add('is-visible');
+        });
+
+        const now = performance.now();
         const cat = {
           id: nextCatId++,
           element: container,
-          direction,
+          inner,
           size: Math.round(size),
           height,
-          startX,
-          endX,
-          startY,
-          endY,
-          x: startX,
-          y: startY,
-          speed,
-          currentSpeed: speed,
-          targetSpeed: speed,
-          state: 'running', // 'running' | 'sitting'
-          sitTimer: null,
+          marginX,
+          marginY,
+          x: spawnX,
+          y: spawnY,
+          vx,
+          vy,
+          speed: baseSpeed,
+          baseSpeed,
+          currentSpeed: baseSpeed,
+          targetSpeed: baseSpeed,
+          wanderAngle: initialAngle,
+          state: 'WANDERING', // 'WANDERING' | 'SLOWING' | 'SITTING' | 'PAUSING'
+          targetX: spawnX,
+          targetY: spawnY,
+          nextTargetTime: 0,
+          sitUntil: 0,
+          pauseUntil: 0,
+          sitCooldownUntil: 0,
+          facing: vx >= 0 ? 'right' : 'left',
           lastDustTime: 0,
-          sitCooldownUntil: 0
+          birthTime: now,
+          lifeSpan: isMobile ? 45000 : (55000 + Math.random() * 45000), // 55-100s roaming lifecycle
+          isRetiring: false
         };
 
+        chooseTarget(cat, now);
         cats.push(cat);
 
         // Initial render
         container.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
+        if (cat.facing === 'left') container.classList.add('running-cat-facing-left');
       }
 
-      function update(now) {
-        const dt = Math.min(0.1, (now - lastTime) / 1000);
-        lastTime = now;
+      function steerCat(cat, dt, now) {
+        const distToTarget = Math.hypot(cat.targetX - cat.x, cat.targetY - cat.y);
 
-        const vw = window.innerWidth;
-
-        for (let i = cats.length - 1; i >= 0; i--) {
-          const cat = cats[i];
-
-          // Proximity detection with cursor
-          const catCenterX = cat.x + cat.size / 2;
-          const catCenterY = cat.y + cat.height / 2;
-          const dist = Math.hypot(mouseX - catCenterX, mouseY - catCenterY);
-          const interactionRadius = cat.size * 0.95; // ~28-40px
-
-          // When cursor reaches running cat and cooldown has passed
-          if (dist < interactionRadius && cat.state === 'running' && now > cat.sitCooldownUntil) {
-            cat.state = 'sitting';
+        // Check waypoint completion
+        if (distToTarget < 35 || now > cat.nextTargetTime) {
+          if (Math.random() < 0.15) {
+            cat.state = 'PAUSING';
             cat.targetSpeed = 0;
-            cat.element.classList.add('is-sitting');
-
-            // Sits for ~2.5 to 4.5 seconds
-            const sitDuration = 2500 + Math.random() * 2000;
-            if (cat.sitTimer) clearTimeout(cat.sitTimer);
-
-            cat.sitTimer = setTimeout(() => {
-              // Stand up and resume running
-              cat.state = 'running';
-              cat.targetSpeed = cat.speed;
-              cat.sitCooldownUntil = performance.now() + 1500; // Small cooldown so it doesn't immediately re-trigger in same pixel
-              cat.element.classList.remove('is-sitting');
-            }, sitDuration);
-          }
-
-          // Movement update
-          if (cat.state === 'running') {
-            cat.currentSpeed += (cat.targetSpeed - cat.currentSpeed) * Math.min(1, dt * 8);
-            const moveDelta = (cat.direction === 'left-to-right' ? 1 : -1) * cat.currentSpeed * dt;
-            cat.x += moveDelta;
-
-            const totalDist = cat.endX - cat.startX;
-            const progress = totalDist !== 0 ? (cat.x - cat.startX) / totalDist : 0;
-            const clampedProgress = Math.max(0, Math.min(1, progress));
-            cat.y = cat.startY + (cat.endY - cat.startY) * clampedProgress;
-
-            // Dust puffs while running
-            if (now - cat.lastDustTime > 380 && cat.x > 20 && cat.x < vw - 20) {
-              cat.lastDustTime = now;
-              const dust = document.createElement('div');
-              dust.className = 'cat-dust-puff';
-              dust.style.left = `${cat.direction === 'left-to-right' ? cat.x + 4 : cat.x + cat.size - 4}px`;
-              dust.style.top = `${cat.y + cat.height - 4}px`;
-              layer.appendChild(dust);
-              setTimeout(() => dust.remove(), 450);
-            }
-          }
-
-          // Apply transform
-          cat.element.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
-
-          // Check if exited viewport
-          const isExited = (cat.direction === 'left-to-right' && cat.x > vw + 75) ||
-                           (cat.direction === 'right-to-left' && cat.x < -75);
-
-          if (isExited) {
-            if (cat.sitTimer) clearTimeout(cat.sitTimer);
-            if (cat.element.parentNode) cat.element.remove();
-            cats.splice(i, 1);
+            cat.pauseUntil = now + (600 + Math.random() * 800);
+          } else {
+            chooseTarget(cat, now);
           }
         }
 
-        animFrameId = requestAnimationFrame(update);
+        // 1. Seek Steering toward waypoint
+        let steerX = 0;
+        let steerY = 0;
+        if (distToTarget > 1) {
+          const desiredVx = ((cat.targetX - cat.x) / distToTarget) * cat.speed;
+          const desiredVy = ((cat.targetY - cat.y) / distToTarget) * cat.speed;
+          steerX += (desiredVx - cat.vx) * 1.3;
+          steerY += (desiredVy - cat.vy) * 1.3;
+        }
+
+        // 2. Organic Wander Noise (curved natural paths)
+        cat.wanderAngle += (Math.random() - 0.5) * 1.2 * dt;
+        steerX += Math.cos(cat.wanderAngle) * (cat.speed * 0.42);
+        steerY += Math.sin(cat.wanderAngle) * (cat.speed * 0.28);
+
+        // 3. Boundary Soft Steering (steer away naturally before hitting edge)
+        const bX = cat.marginX;
+        const bY = cat.marginY;
+        if (cat.x < bX) steerX += ((bX - cat.x) / bX) * cat.speed * 2.4;
+        if (cat.x > vw - bX - cat.size) steerX -= ((cat.x - (vw - bX - cat.size)) / bX) * cat.speed * 2.4;
+        if (cat.y < bY) steerY += ((bY - cat.y) / bY) * cat.speed * 2.4;
+        if (cat.y > vh - bY - cat.height) steerY -= ((cat.y - (vh - bY - cat.height)) / bY) * cat.speed * 2.4;
+
+        // 4. Separation from other cats (gentle collision avoidance)
+        for (let j = 0; j < cats.length; j++) {
+          const other = cats[j];
+          if (other === cat) continue;
+          const odx = cat.x - other.x;
+          const ody = cat.y - other.y;
+          const odist = Math.hypot(odx, ody);
+          if (odist > 0 && odist < 65) {
+            const push = ((65 - odist) / 65) * cat.speed * 1.8;
+            steerX += (odx / odist) * push;
+            steerY += (ody / odist) * push;
+          }
+        }
+
+        // 5. Clamp steering force to create smooth turning arcs
+        const steerLen = Math.hypot(steerX, steerY);
+        const maxSteer = 135; // px/s²
+        if (steerLen > maxSteer) {
+          steerX = (steerX / steerLen) * maxSteer;
+          steerY = (steerY / steerLen) * maxSteer;
+        }
+
+        cat.vx += steerX * dt;
+        cat.vy += steerY * dt;
+
+        // Normalize velocity vector to currentSpeed
+        const curLen = Math.hypot(cat.vx, cat.vy);
+        if (curLen > 0.001) {
+          cat.vx = (cat.vx / curLen) * cat.currentSpeed;
+          cat.vy = (cat.vy / curLen) * cat.currentSpeed;
+        }
+
+        cat.x += cat.vx * dt;
+        cat.y += cat.vy * dt;
+
+        // Safe screen bounds clamp
+        cat.x = Math.max(10, Math.min(vw - cat.size - 10, cat.x));
+        cat.y = Math.max(10, Math.min(vh - cat.height - 10, cat.y));
+
+        // Facing direction based on horizontal velocity
+        if (cat.vx < -2 && cat.facing !== 'left') {
+          cat.facing = 'left';
+          cat.element.classList.add('running-cat-facing-left');
+        } else if (cat.vx > 2 && cat.facing !== 'right') {
+          cat.facing = 'right';
+          cat.element.classList.remove('running-cat-facing-left');
+        }
+      }
+
+      function updateCat(cat, dt, now) {
+        // Proximity detection with normal cursor
+        const interactionRadius = cat.size * 1.1;
+        const catCenterX = cat.x + cat.size / 2;
+        const catCenterY = cat.y + cat.height / 2;
+        const distToMouse = Math.hypot(mouseX - catCenterX, mouseY - catCenterY);
+
+        // When user cursor reaches cat
+        if (distToMouse < interactionRadius && cat.state !== 'SITTING' && now > cat.sitCooldownUntil) {
+          cat.state = 'SITTING';
+          cat.targetSpeed = 0;
+          cat.element.classList.add('is-sitting');
+          const sitDuration = 2500 + Math.random() * 2000;
+          cat.sitUntil = now + sitDuration;
+        }
+
+        // State Machine
+        if (cat.state === 'SITTING') {
+          cat.currentSpeed += (0 - cat.currentSpeed) * Math.min(1, dt * 10);
+          if (now > cat.sitUntil) {
+            // Stand up and resume wandering
+            cat.state = 'WANDERING';
+            cat.targetSpeed = cat.baseSpeed;
+            cat.sitCooldownUntil = now + 1800;
+            cat.element.classList.remove('is-sitting');
+            chooseTarget(cat, now);
+          }
+        } else if (cat.state === 'PAUSING') {
+          cat.currentSpeed += (0 - cat.currentSpeed) * Math.min(1, dt * 8);
+          if (now > cat.pauseUntil) {
+            cat.state = 'WANDERING';
+            cat.targetSpeed = cat.baseSpeed;
+            chooseTarget(cat, now);
+          }
+        } else {
+          // WANDERING
+          cat.currentSpeed += (cat.targetSpeed - cat.currentSpeed) * Math.min(1, dt * 5);
+          steerCat(cat, dt, now);
+
+          // Subtle dust particles while running
+          if (cat.currentSpeed > 25 && now - cat.lastDustTime > 390 && cat.x > 25 && cat.x < vw - 25) {
+            cat.lastDustTime = now;
+            const dust = document.createElement('div');
+            dust.className = 'cat-dust-puff';
+            dust.style.left = `${cat.facing === 'right' ? cat.x + 4 : cat.x + cat.size - 4}px`;
+            dust.style.top = `${cat.y + cat.height - 4}px`;
+            layer.appendChild(dust);
+            setTimeout(() => dust.remove(), 450);
+          }
+        }
+
+        // Render GPU transform
+        cat.element.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
+
+        // Check gentle retirement
+        if (!cat.isRetiring && now - cat.birthTime > cat.lifeSpan) {
+          cat.isRetiring = true;
+          cat.element.classList.remove('is-visible');
+          setTimeout(() => {
+            removeCat(cat);
+          }, 800);
+        }
+      }
+
+      function removeCat(cat) {
+        const idx = cats.indexOf(cat);
+        if (idx !== -1) {
+          cats.splice(idx, 1);
+        }
+        if (cat.element && cat.element.parentNode) {
+          cat.element.remove();
+        }
+      }
+
+      function animationLoop(now) {
+        const dt = Math.min(0.08, (now - lastTime) / 1000);
+        lastTime = now;
+
+        for (let i = cats.length - 1; i >= 0; i--) {
+          updateCat(cats[i], dt, now);
+        }
+
+        animFrameId = requestAnimationFrame(animationLoop);
       }
 
       function scheduleNextSpawn() {
-        const isMobile = window.innerWidth < 640;
-        const minDelay = isMobile ? 12000 : 8000;
-        const randomExtra = isMobile ? 12000 : 10000;
-        const nextDelay = minDelay + Math.random() * randomExtra;
+        const isMobile = vw < 640;
+        const maxCats = isMobile ? 1 : 3;
+        const minDelay = isMobile ? 18000 : 10000;
+        const randomExtra = isMobile ? 16000 : 12000;
 
         spawnTimerId = setTimeout(() => {
-          spawnCat();
-
-          // 30% chance for a companion cat in the opposite direction (crossing paths!)
-          if (!isMobile && Math.random() < 0.3) {
-            setTimeout(() => {
-              spawnCat();
-            }, 2000 + Math.random() * 2000);
+          if (cats.length < maxCats) {
+            createCat();
           }
-
           scheduleNextSpawn();
-        }, nextDelay);
+        }, minDelay + Math.random() * randomExtra);
       }
 
-      // Start RAF loop
+      // Start engine loop
       lastTime = performance.now();
-      animFrameId = requestAnimationFrame(update);
+      animFrameId = requestAnimationFrame(animationLoop);
 
-      // Initial spawn after 3.2s of page load
+      // Initial cat spawn after 2.4s
       setTimeout(() => {
-        spawnCat('left-to-right');
+        createCat();
+        // Desktop companion cat after 9s
+        if (vw >= 640) {
+          setTimeout(() => {
+            if (cats.length < 2) createCat();
+          }, 9000);
+        }
         scheduleNextSpawn();
-      }, 3200);
+      }, 2400);
 
-      // Clean handling when user tabs away and returns
+      // Visibility handling
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
           clearTimeout(spawnTimerId);
