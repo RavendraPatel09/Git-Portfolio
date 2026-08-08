@@ -1579,7 +1579,7 @@
       margin-top: -1px;
     }
 
-    /* 4-Frame Keyframe Cycling */
+    /* 4-Frame Running Keyframe Cycling */
     @keyframes showCatFrame0 { 0%, 24.9% { opacity: 1; visibility: visible; } 25%, 100% { opacity: 0; visibility: hidden; } }
     @keyframes showCatFrame1 { 0%, 24.9% { opacity: 0; visibility: hidden; } 25%, 49.9% { opacity: 1; visibility: visible; } 50%, 100% { opacity: 0; visibility: hidden; } }
     @keyframes showCatFrame2 { 0%, 49.9% { opacity: 0; visibility: hidden; } 50%, 74.9% { opacity: 1; visibility: visible; } 75%, 100% { opacity: 0; visibility: hidden; } }
@@ -1589,10 +1589,33 @@
     .cat-frame-1 { animation: showCatFrame1 0.32s infinite steps(1); }
     .cat-frame-2 { animation: showCatFrame2 0.32s infinite steps(1); }
     .cat-frame-3 { animation: showCatFrame3 0.32s infinite steps(1); }
+    .cat-frame-sit { opacity: 0; visibility: hidden; }
 
     @keyframes catRunningBob {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-3px); }
+    }
+
+    /* Sitting Pose Overrides */
+    .running-cat-container.is-sitting .running-cat-inner {
+      animation: catSitBreathe 2s ease-in-out infinite;
+    }
+    .running-cat-container.is-sitting .cat-frame-0,
+    .running-cat-container.is-sitting .cat-frame-1,
+    .running-cat-container.is-sitting .cat-frame-2,
+    .running-cat-container.is-sitting .cat-frame-3 {
+      animation: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    .running-cat-container.is-sitting .cat-frame-sit {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    @keyframes catSitBreathe {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-0.8px); }
     }
 
     /* Tiny pixel dust particle behind feet */
@@ -1609,30 +1632,6 @@
     @keyframes catDustFade {
       0% { opacity: 0.8; transform: scale(1) translate(0, 0); }
       100% { opacity: 0; transform: scale(0.2) translate(-6px, -4px); }
-    }
-
-    /* Optional Tiny Speech Bubble */
-    .cat-bubble {
-      position: absolute;
-      top: -18px;
-      padding: 1px 5px;
-      background: #18181b;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: #e4e4e7;
-      white-space: nowrap;
-      pointer-events: none;
-      animation: bubbleFloat 1.2s ease-out forwards;
-      z-index: 26;
-    }
-
-    @keyframes bubbleFloat {
-      0% { opacity: 0; transform: translateY(2px) scale(0.8); }
-      20% { opacity: 1; transform: translateY(-2px) scale(1); }
-      80% { opacity: 1; transform: translateY(-6px) scale(1); }
-      100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
     }
 
     a:focus-visible, button:focus-visible {
