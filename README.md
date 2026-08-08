@@ -1,7 +1,6 @@
 # Ravendra Patel — Developer Portfolio v2
 
 > **Software Developer · Full-Stack & Systems**  
-> Premium, animated, colorful-yet-minimal developer portfolio for Ravendra Patel. Built as a single, zero-dependency, production-ready `index.html` file inspired by [nitin.vision](https://nitin.vision/).
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
