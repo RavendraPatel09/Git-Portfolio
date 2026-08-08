@@ -2401,39 +2401,47 @@
     }
 
     /**
-     * 2. Resilient GitHub Heatmap with SVG Generator Fallback
+     * 2. Real Live GitHub Heatmap Loader & Renderer
      */
-    function initHeatmapFallback() {
-      const img = document.getElementById('github-heatmap-img');
+    async function initRealGitHubHeatmap() {
       const container = document.getElementById('heatmap-container');
-      if (!img || !container) return;
+      const yearLabel = document.getElementById('heatmap-year-label');
+      const totalLabel = document.getElementById('heatmap-total-count');
+      const tooltip = document.getElementById('heatmap-tooltip');
+      if (!container) return;
 
-      // If image fails to load or takes longer than 3.5s, generate SVG fallback
-      const timer = setTimeout(() => {
-        if (!img.complete || img.naturalWidth === 0) {
-          renderFallbackSVGHeatmap(container);
+      try {
+        const res = await fetch('./github-contributions.json');
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        if (!data || !data.weeks || data.weeks.length === 0) {
+          throw new Error('Malformed contribution data');
         }
-      }, 3500);
-
-      img.onerror = () => {
-        clearTimeout(timer);
-        renderFallbackSVGHeatmap(container);
-      };
-
-      img.onload = () => {
-        clearTimeout(timer);
-      };
+        renderRealHeatmap(data, container, yearLabel, totalLabel, tooltip);
+      } catch (err) {
+        console.warn('Unable to load ./github-contributions.json, using fallback calendar:', err);
+        renderFallbackHeatmap(container, yearLabel, totalLabel, tooltip);
+      }
     }
 
-    function renderFallbackSVGHeatmap(container) {
-      if (!container) return;
-      
-      const weeks = 52;
-      const days = 7;
+    function formatContributionDate(dateStr, formatLong = false) {
+      if (!dateStr) return '';
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const longMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthName = formatLong ? longMonths[month - 1] : shortMonths[month - 1];
+      return `${monthName} ${day}, ${year}`;
+    }
+
+    function renderRealHeatmap(data, container, yearLabel, totalLabel, tooltip) {
+      const weeks = data.weeks;
+      const numWeeks = weeks.length;
       const cellSize = 11;
       const gap = 3;
-      const width = weeks * (cellSize + gap) + 40;
-      const height = days * (cellSize + gap) + 30;
+      const leftPad = 32;
+      const topPad = 20;
+      const width = leftPad + numWeeks * (cellSize + gap) + 10;
+      const height = topPad + 7 * (cellSize + gap) + 10;
 
       // Color levels matching our obsidian & purple/teal palette
       const colors = [
@@ -2444,21 +2452,138 @@
         '#06b6d4'  // level 4
       ];
 
+      // Update Year Range Header dynamically
+      const firstWeek = weeks[0];
+      const lastWeek = weeks[numWeeks - 1];
+      const firstDate = firstWeek.contributionDays[0]?.date;
+      const lastDate = lastWeek.contributionDays[lastWeek.contributionDays.length - 1]?.date;
+      
+      if (yearLabel && firstDate && lastDate) {
+        const startYear = firstDate.split('-')[0];
+        const endYear = lastDate.split('-')[0];
+        yearLabel.textContent = startYear === endYear ? startYear : `${startYear} \u2014 ${endYear}`;
+      }
+
+      // Update Total Contributions counter
+      if (totalLabel && typeof data.totalContributions === 'number') {
+        totalLabel.textContent = `${data.totalContributions.toLocaleString()} contributions in the last year`;
+      }
+
+      // Generate Dynamic Month Labels
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      let monthLabels = '';
+      let lastMonth = -1;
+      let lastMonthWeek = -10;
+
+      weeks.forEach((w, wIdx) => {
+        const firstDay = w.contributionDays[0];
+        if (firstDay && firstDay.date) {
+          const d = new Date(firstDay.date + 'T00:00:00Z');
+          const m = d.getUTCMonth();
+          if (m !== lastMonth && (wIdx - lastMonthWeek >= 3)) {
+            const x = leftPad + wIdx * (cellSize + gap);
+            monthLabels += `<text x="${x}" y="12" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="9">${monthNames[m]}</text>`;
+            lastMonth = m;
+            lastMonthWeek = wIdx;
+          }
+        }
+      });
+
+      // Weekday Labels
+      const dayLabels = `
+        <text x="5" y="${topPad + 1 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Mon</text>
+        <text x="5" y="${topPad + 3 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Wed</text>
+        <text x="5" y="${topPad + 5 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Fri</text>
+      `;
+
+      // Generate Grid Cells
+      let cells = '';
+      weeks.forEach((w, wIdx) => {
+        w.contributionDays.forEach((day) => {
+          const x = leftPad + wIdx * (cellSize + gap);
+          const y = topPad + day.weekday * (cellSize + gap);
+          const level = Math.min(Math.max(day.level || 0, 0), 4);
+          const color = colors[level];
+          const count = day.contributionCount || 0;
+          const labelShort = count === 0 
+            ? `No contributions on ${formatContributionDate(day.date, false)}`
+            : `${count} contribution${count === 1 ? '' : 's'} on ${formatContributionDate(day.date, false)}`;
+          const labelLong = count === 0 
+            ? `No contributions on ${formatContributionDate(day.date, true)}`
+            : `${count} contribution${count === 1 ? '' : 's'} on ${formatContributionDate(day.date, true)}`;
+
+          cells += `<rect class="heatmap-cell" x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${color}" stroke="rgba(255,255,255,0.03)" data-date="${day.date}" data-count="${count}" data-label="${labelShort}" tabindex="0" role="gridcell" aria-label="${labelLong}"><title>${labelShort}</title></rect>`;
+        });
+      });
+
+      container.innerHTML = `
+        <div id="heatmap-tooltip" class="heatmap-tooltip" role="tooltip" aria-hidden="true"></div>
+        <svg viewBox="0 0 ${width} ${height}" class="svg-heatmap-grid" xmlns="http://www.w3.org/2000/svg" role="grid" aria-label="GitHub contribution calendar">
+          ${monthLabels}
+          ${dayLabels}
+          ${cells}
+        </svg>
+      `;
+
+      // Attach tooltip hover & focus behavior
+      const activeTooltip = container.querySelector('#heatmap-tooltip') || tooltip;
+      if (!activeTooltip) return;
+
+      const cellEls = container.querySelectorAll('.heatmap-cell');
+
+      function showTooltip(cell) {
+        const text = cell.getAttribute('data-label');
+        if (!text) return;
+        activeTooltip.textContent = text;
+        activeTooltip.classList.add('visible');
+
+        const cellRect = cell.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const left = cellRect.left - containerRect.left + (cellRect.width / 2);
+        const top = cellRect.top - containerRect.top;
+
+        activeTooltip.style.left = `${left}px`;
+        activeTooltip.style.top = `${top}px`;
+      }
+
+      function hideTooltip() {
+        activeTooltip.classList.remove('visible');
+      }
+
+      cellEls.forEach(cell => {
+        cell.addEventListener('mouseenter', () => showTooltip(cell));
+        cell.addEventListener('mouseleave', hideTooltip);
+        cell.addEventListener('focus', () => showTooltip(cell));
+        cell.addEventListener('blur', hideTooltip);
+      });
+    }
+
+    function renderFallbackHeatmap(container, yearLabel, totalLabel, tooltip) {
+      if (!container) return;
+      if (totalLabel) totalLabel.textContent = "GitHub activity temporarily offline";
+      
+      const weeks = 52;
+      const days = 7;
+      const cellSize = 11;
+      const gap = 3;
+      const leftPad = 32;
+      const topPad = 20;
+      const width = leftPad + weeks * (cellSize + gap) + 10;
+      const height = topPad + days * (cellSize + gap) + 10;
+
+      const colors = ['#18181b', '#4c1d95', '#6d28d9', '#8b5cf6', '#06b6d4'];
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       let monthLabels = '';
       for (let m = 0; m < 12; m++) {
-        const x = 30 + m * (weeks * (cellSize + gap) / 12);
+        const x = leftPad + m * (weeks * (cellSize + gap) / 12);
         monthLabels += `<text x="${x}" y="12" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="9">${months[m]}</text>`;
       }
 
       let cells = '';
-      // Deterministic seed for realistic activity pattern
       for (let w = 0; w < weeks; w++) {
         for (let d = 0; d < days; d++) {
-          const x = 30 + w * (cellSize + gap);
-          const y = 20 + d * (cellSize + gap);
-          
-          // Realistic activity weight (more active in recent months)
+          const x = leftPad + w * (cellSize + gap);
+          const y = topPad + d * (cellSize + gap);
           const factor = (w / weeks) * 0.8 + 0.2;
           const hash = (Math.sin(w * 13 + d * 7) + 1) / 2;
           let level = 0;
@@ -2468,14 +2593,14 @@
           if (hash * factor > 0.96) level = 4;
 
           const color = colors[level];
-          cells += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${color}" stroke="rgba(255,255,255,0.03)" />`;
+          cells += `<rect class="heatmap-cell" x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${color}" stroke="rgba(255,255,255,0.03)" />`;
         }
       }
 
       const dayLabels = `
-        <text x="5" y="32" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Mon</text>
-        <text x="5" y="60" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Wed</text>
-        <text x="5" y="88" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Fri</text>
+        <text x="5" y="${topPad + 1 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Mon</text>
+        <text x="5" y="${topPad + 3 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Wed</text>
+        <text x="5" y="${topPad + 5 * (cellSize + gap) + 9}" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">Fri</text>
       `;
 
       container.innerHTML = `
