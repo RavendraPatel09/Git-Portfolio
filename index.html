@@ -3065,12 +3065,30 @@
       const layer = document.getElementById('running-cats-layer');
       if (!layer) return;
 
-      let activeCatsCount = 0;
+      const cats = [];
+      let nextCatId = 1;
       let spawnTimerId = null;
+      let animFrameId = null;
+      let lastTime = performance.now();
+
+      // Read-only mouse coordinate tracker (global, never touches or alters cursor)
+      let mouseX = -9999;
+      let mouseY = -9999;
+
+      window.addEventListener('pointermove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      }, { passive: true });
+
+      window.addEventListener('pointerleave', () => {
+        mouseX = -9999;
+        mouseY = -9999;
+      }, { passive: true });
 
       function getCatSvg(variant) {
-        const shadowId = 'cat-shadow-' + Math.random().toString(36).substr(2, 7);
+        const shadowId = 'cat-drop-' + Math.random().toString(36).substr(2, 7);
         const collar = variant === 1 ? '<rect x="15" y="8" width="2" height="4" fill="#8b5cf6"/>' : '';
+        const collarSit = variant === 1 ? '<rect x="13" y="7" width="5" height="2" fill="#8b5cf6"/>' : '';
         const earColor = variant === 2 ? '#ec4899' : '#f472b6';
         const tailHigher = variant === 2;
 
@@ -3161,6 +3179,33 @@
               <rect x="5" y="12" width="3" height="2" fill="#ffffff"/>
               <rect x="3" y="13" width="2" height="3" fill="#ffffff"/>
             </g>
+
+            <!-- Frame Sit: Natural compact sitting posture -->
+            <g class="cat-frame cat-frame-sit" filter="url(#${shadowId})">
+              <!-- Tail wrapped forward -->
+              <rect x="3" y="13" width="4" height="2" fill="#ffffff"/>
+              <rect x="2" y="11" width="2" height="3" fill="#ffffff"/>
+              <!-- Hind haunches folded -->
+              <rect x="5" y="10" width="6" height="5" fill="#ffffff"/>
+              <!-- Body upright -->
+              <rect x="9" y="7" width="8" height="8" fill="#ffffff"/>
+              <rect x="10" y="6" width="6" height="1" fill="#ffffff"/>
+              ${collarSit}
+              <!-- Front paws straight down -->
+              <rect x="14" y="12" width="2" height="4" fill="#ffffff"/>
+              <rect x="16" y="12" width="2" height="4" fill="#e4e4e7"/>
+              <!-- Head upright and alert -->
+              <rect x="12" y="2" width="7" height="6" fill="#ffffff"/>
+              <rect x="13" y="1" width="5" height="1" fill="#ffffff"/>
+              <!-- Ears -->
+              <rect x="13" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="17" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="14" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="18" y="1" width="1" height="1" fill="${earColor}"/>
+              <!-- Eye & Snout -->
+              <rect x="17" y="4" width="1.2" height="2" fill="#09090b"/>
+              <rect x="19" y="5" width="1" height="1" fill="#f472b6"/>
+            </g>
           </svg>
         `;
       }
@@ -3169,10 +3214,8 @@
         const isMobile = window.innerWidth < 640;
         const maxCats = isMobile ? 1 : 3;
 
-        if (activeCatsCount >= maxCats) return;
+        if (cats.length >= maxCats) return;
         if (document.hidden) return;
-
-        activeCatsCount++;
 
         const vw = window.innerWidth;
         const vh = window.innerHeight;
@@ -3180,6 +3223,7 @@
         const direction = forceDirection || (Math.random() > 0.5 ? 'left-to-right' : 'right-to-left');
         const variant = Math.floor(Math.random() * 3);
         const size = isMobile ? (26 + Math.random() * 4) : (32 + Math.random() * 8);
+        const height = Math.round(size * (18 / 28));
 
         // Safe vertical bounds
         const minY = vh * 0.12;
@@ -3187,18 +3231,15 @@
         const startY = minY + Math.random() * (maxY - minY);
         const endY = startY + (Math.random() * 40 - 20);
 
-        const startX = direction === 'left-to-right' ? -65 : (vw + 65);
-        const endX = direction === 'left-to-right' ? (vw + 65) : -65;
+        const startX = direction === 'left-to-right' ? -70 : (vw + 70);
+        const endX = direction === 'left-to-right' ? (vw + 70) : -70;
 
-        // Speed: 110-165 px/sec
-        const speed = 110 + Math.random() * 55;
-        const distance = Math.abs(endX - startX);
-        const duration = (distance / speed) * 1000;
+        const speed = 115 + Math.random() * 45; // 115 - 160 px/sec
 
-        const catContainer = document.createElement('div');
-        catContainer.className = `running-cat-container ${direction === 'right-to-left' ? 'running-cat-facing-left' : ''}`;
-        catContainer.style.width = `${Math.round(size)}px`;
-        catContainer.style.height = `${Math.round(size * (18 / 28))}px`;
+        const container = document.createElement('div');
+        container.className = `running-cat-container ${direction === 'right-to-left' ? 'running-cat-facing-left' : ''}`;
+        container.style.width = `${Math.round(size)}px`;
+        container.style.height = `${height}px`;
 
         const inner = document.createElement('div');
         inner.className = 'running-cat-inner';
@@ -3206,57 +3247,108 @@
           ${getCatSvg(variant)}
           <div class="cat-shadow"></div>
         `;
+        container.appendChild(inner);
+        layer.appendChild(container);
 
-        // 12% chance for cute text bubble midway
-        if (Math.random() < 0.12) {
-          setTimeout(() => {
-            if (catContainer.isConnected) {
-              const bubble = document.createElement('div');
-              bubble.className = 'cat-bubble';
-              const textList = ['meow.', '🐾', 'purr~', 'nyan'];
-              bubble.textContent = textList[Math.floor(Math.random() * textList.length)];
-              catContainer.appendChild(bubble);
-            }
-          }, duration * 0.45);
-        }
-
-        catContainer.appendChild(inner);
-        layer.appendChild(catContainer);
-
-        // Optional tiny pixel dust particles
-        const dustInterval = setInterval(() => {
-          if (!catContainer.isConnected) {
-            clearInterval(dustInterval);
-            return;
-          }
-          const rect = catContainer.getBoundingClientRect();
-          if (rect.left > 10 && rect.left < vw - 10) {
-            const dust = document.createElement('div');
-            dust.className = 'cat-dust-puff';
-            dust.style.left = `${direction === 'left-to-right' ? rect.left + 4 : rect.right - 4}px`;
-            dust.style.top = `${rect.bottom - 4}px`;
-            layer.appendChild(dust);
-            setTimeout(() => dust.remove(), 450);
-          }
-        }, 360);
-
-        // Execute smooth GPU transform
-        const anim = catContainer.animate([
-          { transform: `translate3d(${startX}px, ${startY}px, 0)` },
-          { transform: `translate3d(${endX}px, ${endY}px, 0)` }
-        ], {
-          duration: duration,
-          easing: 'linear'
-        });
-
-        const cleanup = () => {
-          clearInterval(dustInterval);
-          if (catContainer.parentNode) catContainer.remove();
-          activeCatsCount = Math.max(0, activeCatsCount - 1);
+        const cat = {
+          id: nextCatId++,
+          element: container,
+          direction,
+          size: Math.round(size),
+          height,
+          startX,
+          endX,
+          startY,
+          endY,
+          x: startX,
+          y: startY,
+          speed,
+          currentSpeed: speed,
+          targetSpeed: speed,
+          state: 'running', // 'running' | 'sitting'
+          sitTimer: null,
+          lastDustTime: 0,
+          sitCooldownUntil: 0
         };
 
-        anim.onfinish = cleanup;
-        anim.oncancel = cleanup;
+        cats.push(cat);
+
+        // Initial render
+        container.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
+      }
+
+      function update(now) {
+        const dt = Math.min(0.1, (now - lastTime) / 1000);
+        lastTime = now;
+
+        const vw = window.innerWidth;
+
+        for (let i = cats.length - 1; i >= 0; i--) {
+          const cat = cats[i];
+
+          // Proximity detection with cursor
+          const catCenterX = cat.x + cat.size / 2;
+          const catCenterY = cat.y + cat.height / 2;
+          const dist = Math.hypot(mouseX - catCenterX, mouseY - catCenterY);
+          const interactionRadius = cat.size * 0.95; // ~28-40px
+
+          // When cursor reaches running cat and cooldown has passed
+          if (dist < interactionRadius && cat.state === 'running' && now > cat.sitCooldownUntil) {
+            cat.state = 'sitting';
+            cat.targetSpeed = 0;
+            cat.element.classList.add('is-sitting');
+
+            // Sits for ~2.5 to 4.5 seconds
+            const sitDuration = 2500 + Math.random() * 2000;
+            if (cat.sitTimer) clearTimeout(cat.sitTimer);
+
+            cat.sitTimer = setTimeout(() => {
+              // Stand up and resume running
+              cat.state = 'running';
+              cat.targetSpeed = cat.speed;
+              cat.sitCooldownUntil = performance.now() + 1500; // Small cooldown so it doesn't immediately re-trigger in same pixel
+              cat.element.classList.remove('is-sitting');
+            }, sitDuration);
+          }
+
+          // Movement update
+          if (cat.state === 'running') {
+            cat.currentSpeed += (cat.targetSpeed - cat.currentSpeed) * Math.min(1, dt * 8);
+            const moveDelta = (cat.direction === 'left-to-right' ? 1 : -1) * cat.currentSpeed * dt;
+            cat.x += moveDelta;
+
+            const totalDist = cat.endX - cat.startX;
+            const progress = totalDist !== 0 ? (cat.x - cat.startX) / totalDist : 0;
+            const clampedProgress = Math.max(0, Math.min(1, progress));
+            cat.y = cat.startY + (cat.endY - cat.startY) * clampedProgress;
+
+            // Dust puffs while running
+            if (now - cat.lastDustTime > 380 && cat.x > 20 && cat.x < vw - 20) {
+              cat.lastDustTime = now;
+              const dust = document.createElement('div');
+              dust.className = 'cat-dust-puff';
+              dust.style.left = `${cat.direction === 'left-to-right' ? cat.x + 4 : cat.x + cat.size - 4}px`;
+              dust.style.top = `${cat.y + cat.height - 4}px`;
+              layer.appendChild(dust);
+              setTimeout(() => dust.remove(), 450);
+            }
+          }
+
+          // Apply transform
+          cat.element.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
+
+          // Check if exited viewport
+          const isExited = (cat.direction === 'left-to-right' && cat.x > vw + 75) ||
+                           (cat.direction === 'right-to-left' && cat.x < -75);
+
+          if (isExited) {
+            if (cat.sitTimer) clearTimeout(cat.sitTimer);
+            if (cat.element.parentNode) cat.element.remove();
+            cats.splice(i, 1);
+          }
+        }
+
+        animFrameId = requestAnimationFrame(update);
       }
 
       function scheduleNextSpawn() {
@@ -3279,6 +3371,10 @@
         }, nextDelay);
       }
 
+      // Start RAF loop
+      lastTime = performance.now();
+      animFrameId = requestAnimationFrame(update);
+
       // Initial spawn after 3.2s of page load
       setTimeout(() => {
         spawnCat('left-to-right');
@@ -3290,6 +3386,7 @@
         if (document.hidden) {
           clearTimeout(spawnTimerId);
         } else {
+          lastTime = performance.now();
           scheduleNextSpawn();
         }
       });
