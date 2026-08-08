@@ -1494,7 +1494,7 @@
     }
 
     /* ==========================================================================
-       RUNNING CATS EASTER EGG LAYER (FIXED VIEWPORT)
+       RUNNING CATS EASTER EGG LAYER (FIXED VIEWPORT — EXACTLY 2 CATS)
        ========================================================================== */
     #running-cats-layer {
       position: fixed;
@@ -1503,7 +1503,7 @@
       height: 100vh;
       pointer-events: none;
       overflow: hidden;
-      z-index: 25; /* Above background/cards, below fixed header/modals */
+      z-index: 20;
     }
 
     .running-cat-container {
@@ -1511,16 +1511,11 @@
       top: 0;
       left: 0;
       pointer-events: none;
-      will-change: transform, opacity;
+      will-change: transform;
       user-select: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      opacity: 0;
-      transition: opacity 0.6s ease-in-out;
-    }
-
-    .running-cat-container.is-visible {
       opacity: 1;
     }
 
@@ -1530,6 +1525,11 @@
       align-items: center;
       animation: catRunningBob 0.32s ease-in-out infinite;
       transform-origin: center bottom;
+    }
+
+    .running-cat-container:nth-child(2) .running-cat-inner {
+      animation: catRunningBob 0.27s ease-in-out infinite;
+      animation-delay: -0.13s;
     }
 
     .running-cat-facing-left .running-cat-inner {
@@ -1563,33 +1563,15 @@
     .cat-frame-1 { animation: showCatFrame1 0.32s infinite steps(1); }
     .cat-frame-2 { animation: showCatFrame2 0.32s infinite steps(1); }
     .cat-frame-3 { animation: showCatFrame3 0.32s infinite steps(1); }
-    .cat-frame-sit { opacity: 0; visibility: hidden; }
+
+    .running-cat-container:nth-child(2) .cat-frame-0 { animation: showCatFrame0 0.27s infinite steps(1); animation-delay: -0.13s; }
+    .running-cat-container:nth-child(2) .cat-frame-1 { animation: showCatFrame1 0.27s infinite steps(1); animation-delay: -0.13s; }
+    .running-cat-container:nth-child(2) .cat-frame-2 { animation: showCatFrame2 0.27s infinite steps(1); animation-delay: -0.13s; }
+    .running-cat-container:nth-child(2) .cat-frame-3 { animation: showCatFrame3 0.27s infinite steps(1); animation-delay: -0.13s; }
 
     @keyframes catRunningBob {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-3px); }
-    }
-
-    /* Sitting Pose Overrides */
-    .running-cat-container.is-sitting .running-cat-inner {
-      animation: catSitBreathe 2s ease-in-out infinite;
-    }
-    .running-cat-container.is-sitting .cat-frame-0,
-    .running-cat-container.is-sitting .cat-frame-1,
-    .running-cat-container.is-sitting .cat-frame-2,
-    .running-cat-container.is-sitting .cat-frame-3 {
-      animation: none !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
-    }
-    .running-cat-container.is-sitting .cat-frame-sit {
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-
-    @keyframes catSitBreathe {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-0.8px); }
     }
 
     /* Tiny pixel dust particle behind feet */
@@ -1623,10 +1605,6 @@
     <div class="blob blob-3"></div>
   </div>
   <div class="ambient-grid" aria-hidden="true"></div>
-
-  <!-- Custom Cursor Elements -->
-  <div id="cursor-dot" class="cursor-dot" aria-hidden="true"></div>
-  <div id="cursor-ring" class="cursor-ring" aria-hidden="true"></div>
 
   <!-- Sticky Header Navigation -->
   <header id="site-header" class="site-header">
@@ -2421,13 +2399,10 @@
       // 9. One-Click Copy Email
       initCopyEmail();
 
-      // 10. Custom Desktop Cursor
-      initCustomCursor();
-
-      // 11. Scroll Reveal Animations
+      // 10. Scroll Reveal Animations
       initScrollReveal();
 
-      // 12. Full-Screen Running White Cats Easter Egg
+      // 11. Full-Screen Running White Cats Easter Egg (Exactly 2 Cats)
       initRunningCats();
     });
 
@@ -2959,46 +2934,6 @@
     }
 
     /**
-     * 9. Custom Desktop Cursor
-     */
-    function initCustomCursor() {
-      if (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        return;
-      }
-
-      const dot = document.getElementById('cursor-dot');
-      const ring = document.getElementById('cursor-ring');
-      if (!dot || !ring) return;
-
-      let mouseX = 0, mouseY = 0;
-      let ringX = 0, ringY = 0;
-
-      window.addEventListener('mousemove', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        dot.style.opacity = '1';
-        ring.style.opacity = '1';
-        dot.style.left = `${mouseX}px`;
-        dot.style.top = `${mouseY}px`;
-      });
-
-      function renderRing() {
-        ringX += (mouseX - ringX) * 0.18;
-        ringY += (mouseY - ringY) * 0.18;
-        ring.style.left = `${ringX}px`;
-        ring.style.top = `${ringY}px`;
-        requestAnimationFrame(renderRing);
-      }
-      renderRing();
-
-      const interactives = document.querySelectorAll('a, button, .skill-badge, .project-card, .contact-link-card');
-      interactives.forEach(el => {
-        el.addEventListener('mouseenter', () => ring.classList.add('hover'));
-        el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
-      });
-    }
-
-    /**
      * 10. Scroll Reveal Animations
      */
     function initScrollReveal() {
@@ -3030,17 +2965,17 @@
     }
 
     /**
-     * 12. Full-Screen Free-Roaming Pixel-Art White Cats Easter Egg
+     * 11. Full-Screen Free-Roaming Pixel-Art White Cats Easter Egg
      * 
-     * Architecture & Features:
-     * - Free 2D Roaming across full viewport (natural non-linear wander paths)
-     * - Kinematic Steering & Waypoint Engine (Seek, Wander noise, Boundary steering, Separation)
-     * - Organic curved trajectories with smooth acceleration & angular damping
-     * - Read-only global cursor proximity detection (Normal cursor 100% untouched)
-     * - Sits for 2.5–4.5s upon cursor arrival, then stands up and resumes wandering
-     * - Multi-cat independent behavior (Max 1–3 on desktop, 0–1 on mobile)
-     * - Self-contained inline pixel-art SVGs (4 running frames + sitting frame)
-     * - Single RAF animation loop, resize-safe, garbage-collected, reduced-motion compliant
+     * Architecture & Specifications:
+     * - EXACTLY TWO (2) RUNNING CATS: Cat 1 & Cat 2 (No random spawns, no despawns, perpetually alive)
+     * - Free 2D Roaming across the full visible viewport (0 -> window.innerWidth, 0 -> window.innerHeight)
+     * - Kinematic 2D steering engine (Continuous wander angle, soft boundary repulsion, cat separation)
+     * - Smooth curved trajectories with angular damping (No straight horizontal lines, no marquee behavior)
+     * - Facing direction flips horizontally based on velocity (scaleX(1) / scaleX(-1))
+     * - 4-frame pixel-art SVG running animation cycling with subtle bob and dust puffs
+     * - Normal system/browser cursor remains 100% untouched (pointer-events: none, no custom cursor)
+     * - Single requestAnimationFrame loop, resize-safe, garbage-collection free, reduced-motion compliant
      */
     function initRunningCats() {
       if (typeof window === 'undefined') return;
@@ -3049,41 +2984,14 @@
       const layer = document.getElementById('running-cats-layer');
       if (!layer) return;
 
-      const cats = [];
-      let nextCatId = 1;
-      let spawnTimerId = null;
-      let animFrameId = null;
-      let lastTime = performance.now();
-
       // Viewport dimensions (cached, updated on resize)
       let vw = window.innerWidth;
       let vh = window.innerHeight;
 
-      // Read-only mouse tracker (zero impact on system cursor)
-      let mouseX = -9999;
-      let mouseY = -9999;
-
-      window.addEventListener('pointermove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      }, { passive: true });
-
-      window.addEventListener('pointerleave', () => {
-        mouseX = -9999;
-        mouseY = -9999;
-      }, { passive: true });
-
-      window.addEventListener('resize', () => {
-        vw = window.innerWidth;
-        vh = window.innerHeight;
-      }, { passive: true });
-
       function getCatSvg(variant) {
-        const shadowId = 'cat-drop-' + Math.random().toString(36).substr(2, 7);
+        const shadowId = 'cat-drop-' + (variant === 0 ? 'alpha' : 'beta');
         const collar = variant === 1 ? '<rect x="15" y="8" width="2" height="4" fill="#8b5cf6"/>' : '';
-        const collarSit = variant === 1 ? '<rect x="13" y="7" width="5" height="2" fill="#8b5cf6"/>' : '';
-        const earColor = variant === 2 ? '#ec4899' : '#f472b6';
-        const tailHigher = variant === 2;
+        const earColor = variant === 1 ? '#a78bfa' : '#f472b6';
 
         return `
           <svg class="running-cat-svg" viewBox="0 0 28 18" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -3095,7 +3003,9 @@
 
             <!-- Frame 0: Stride Extension -->
             <g class="cat-frame cat-frame-0" filter="url(#${shadowId})">
-              ${tailHigher ? '<rect x="1" y="2" width="2" height="3" fill="#ffffff"/><rect x="3" y="4" width="3" height="2" fill="#ffffff"/>' : '<rect x="2" y="5" width="2" height="2" fill="#ffffff"/><rect x="4" y="6" width="3" height="2" fill="#ffffff"/><rect x="1" y="3" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="2" y="5" width="2" height="2" fill="#ffffff"/>
+              <rect x="4" y="6" width="3" height="2" fill="#ffffff"/>
+              <rect x="1" y="3" width="2" height="2" fill="#ffffff"/>
               <rect x="6" y="6" width="11" height="6" fill="#ffffff"/>
               <rect x="7" y="5" width="9" height="1" fill="#ffffff"/>
               ${collar}
@@ -3115,7 +3025,9 @@
 
             <!-- Frame 1: Contact / Landing -->
             <g class="cat-frame cat-frame-1" filter="url(#${shadowId})">
-              ${tailHigher ? '<rect x="2" y="1" width="2" height="3" fill="#ffffff"/><rect x="4" y="4" width="2" height="2" fill="#ffffff"/>' : '<rect x="3" y="4" width="2" height="3" fill="#ffffff"/><rect x="5" y="6" width="2" height="2" fill="#ffffff"/><rect x="2" y="2" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="3" y="4" width="2" height="3" fill="#ffffff"/>
+              <rect x="5" y="6" width="2" height="2" fill="#ffffff"/>
+              <rect x="2" y="2" width="2" height="2" fill="#ffffff"/>
               <rect x="6" y="7" width="11" height="6" fill="#ffffff"/>
               <rect x="7" y="6" width="9" height="1" fill="#ffffff"/>
               ${collar}
@@ -3135,7 +3047,9 @@
 
             <!-- Frame 2: Compression / Stride Pass -->
             <g class="cat-frame cat-frame-2" filter="url(#${shadowId})">
-              ${tailHigher ? '<rect x="3" y="1" width="2" height="3" fill="#ffffff"/><rect x="5" y="4" width="2" height="2" fill="#ffffff"/>' : '<rect x="4" y="4" width="2" height="3" fill="#ffffff"/><rect x="6" y="6" width="2" height="2" fill="#ffffff"/><rect x="3" y="2" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="4" y="4" width="2" height="3" fill="#ffffff"/>
+              <rect x="6" y="6" width="2" height="2" fill="#ffffff"/>
+              <rect x="3" y="2" width="2" height="2" fill="#ffffff"/>
               <rect x="7" y="6" width="10" height="6" fill="#ffffff"/>
               <rect x="8" y="5" width="8" height="1" fill="#ffffff"/>
               ${collar}
@@ -3155,7 +3069,9 @@
 
             <!-- Frame 3: Launch / Push -->
             <g class="cat-frame cat-frame-3" filter="url(#${shadowId})">
-              ${tailHigher ? '<rect x="2" y="2" width="2" height="3" fill="#ffffff"/><rect x="4" y="5" width="2" height="2" fill="#ffffff"/>' : '<rect x="3" y="5" width="2" height="2" fill="#ffffff"/><rect x="5" y="6" width="2" height="2" fill="#ffffff"/><rect x="1" y="4" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="3" y="5" width="2" height="2" fill="#ffffff"/>
+              <rect x="5" y="6" width="2" height="2" fill="#ffffff"/>
+              <rect x="1" y="4" width="2" height="2" fill="#ffffff"/>
               <rect x="7" y="6" width="10" height="6" fill="#ffffff"/>
               <rect x="8" y="5" width="8" height="1" fill="#ffffff"/>
               ${collar}
@@ -3172,205 +3088,154 @@
               <rect x="5" y="12" width="3" height="2" fill="#ffffff"/>
               <rect x="3" y="13" width="2" height="3" fill="#ffffff"/>
             </g>
-
-            <!-- Frame Sit: Natural compact sitting posture -->
-            <g class="cat-frame cat-frame-sit" filter="url(#${shadowId})">
-              <!-- Tail wrapped forward -->
-              <rect x="3" y="13" width="4" height="2" fill="#ffffff"/>
-              <rect x="2" y="11" width="2" height="3" fill="#ffffff"/>
-              <!-- Hind haunches folded -->
-              <rect x="5" y="10" width="6" height="5" fill="#ffffff"/>
-              <!-- Body upright -->
-              <rect x="9" y="7" width="8" height="8" fill="#ffffff"/>
-              <rect x="10" y="6" width="6" height="1" fill="#ffffff"/>
-              ${collarSit}
-              <!-- Front paws straight down -->
-              <rect x="14" y="12" width="2" height="4" fill="#ffffff"/>
-              <rect x="16" y="12" width="2" height="4" fill="#e4e4e7"/>
-              <!-- Head upright and alert -->
-              <rect x="12" y="2" width="7" height="6" fill="#ffffff"/>
-              <rect x="13" y="1" width="5" height="1" fill="#ffffff"/>
-              <!-- Ears -->
-              <rect x="13" y="0" width="2" height="2" fill="#ffffff"/>
-              <rect x="17" y="0" width="2" height="2" fill="#ffffff"/>
-              <rect x="14" y="1" width="1" height="1" fill="${earColor}"/>
-              <rect x="18" y="1" width="1" height="1" fill="${earColor}"/>
-              <!-- Eye & Snout -->
-              <rect x="17" y="4" width="1.2" height="2" fill="#09090b"/>
-              <rect x="19" y="5" width="1" height="1" fill="#f472b6"/>
-            </g>
           </svg>
         `;
       }
 
-      function chooseTarget(cat, now) {
-        const minX = cat.marginX;
-        const maxX = Math.max(minX + 50, vw - cat.marginX - cat.size);
-        const minY = cat.marginY;
-        const maxY = Math.max(minY + 50, vh - cat.marginY - cat.height);
-
-        cat.targetX = minX + Math.random() * (maxX - minX);
-        cat.targetY = minY + Math.random() * (maxY - minY);
-        cat.nextTargetTime = now + (3500 + Math.random() * 3800);
-      }
-
-      function createCat() {
-        const isMobile = vw < 640;
-        const maxCats = isMobile ? 1 : 3;
-        if (cats.length >= maxCats) return;
-        if (document.hidden) return;
-
-        const size = isMobile ? (26 + Math.random() * 4) : (32 + Math.random() * 8);
-        const height = Math.round(size * (18 / 28));
-        const variant = Math.floor(Math.random() * 3);
-        const baseSpeed = isMobile ? (35 + Math.random() * 15) : (48 + Math.random() * 26);
-        const marginX = isMobile ? 30 : 65;
-        const marginY = isMobile ? 30 : 65;
-
-        // Spawn position in safe playground
-        const spawnX = marginX + Math.random() * Math.max(50, vw - 2 * marginX - size);
-        const spawnY = marginY + Math.random() * Math.max(50, vh - 2 * marginY - height);
-
-        const initialAngle = Math.random() * Math.PI * 2;
-        const vx = Math.cos(initialAngle) * baseSpeed;
-        const vy = Math.sin(initialAngle) * baseSpeed;
-
+      function buildCatDOM(cat) {
         const container = document.createElement('div');
         container.className = 'running-cat-container';
-        container.style.width = `${Math.round(size)}px`;
-        container.style.height = `${height}px`;
+        container.id = `running-cat-${cat.id}`;
+        container.style.width = `${cat.size}px`;
+        container.style.height = `${cat.height}px`;
 
         const inner = document.createElement('div');
         inner.className = 'running-cat-inner';
         inner.innerHTML = `
-          ${getCatSvg(variant)}
+          ${getCatSvg(cat.variant)}
           <div class="cat-shadow"></div>
         `;
+
         container.appendChild(inner);
         layer.appendChild(container);
 
-        // Smooth fade-in
-        requestAnimationFrame(() => {
-          container.classList.add('is-visible');
-        });
+        cat.element = container;
+        cat.inner = inner;
 
-        const now = performance.now();
-        const cat = {
-          id: nextCatId++,
-          element: container,
-          inner,
-          size: Math.round(size),
-          height,
-          marginX,
-          marginY,
-          x: spawnX,
-          y: spawnY,
-          vx,
-          vy,
-          speed: baseSpeed,
-          baseSpeed,
-          currentSpeed: baseSpeed,
-          targetSpeed: baseSpeed,
-          wanderAngle: initialAngle,
-          state: 'WANDERING', // 'WANDERING' | 'SLOWING' | 'SITTING' | 'PAUSING'
-          targetX: spawnX,
-          targetY: spawnY,
-          nextTargetTime: 0,
-          sitUntil: 0,
-          pauseUntil: 0,
-          sitCooldownUntil: 0,
-          facing: vx >= 0 ? 'right' : 'left',
-          lastDustTime: 0,
-          birthTime: now,
-          lifeSpan: isMobile ? 45000 : (55000 + Math.random() * 45000), // 55-100s roaming lifecycle
-          isRetiring: false
-        };
-
-        chooseTarget(cat, now);
-        cats.push(cat);
-
-        // Initial render
+        // Set initial transform
         container.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
         if (cat.facing === 'left') container.classList.add('running-cat-facing-left');
       }
 
-      function steerCat(cat, dt, now) {
-        const distToTarget = Math.hypot(cat.targetX - cat.x, cat.targetY - cat.y);
+      const isMobile = vw < 640;
 
-        // Check waypoint completion
-        if (distToTarget < 35 || now > cat.nextTargetTime) {
-          if (Math.random() < 0.15) {
-            cat.state = 'PAUSING';
-            cat.targetSpeed = 0;
-            cat.pauseUntil = now + (600 + Math.random() * 800);
-          } else {
-            chooseTarget(cat, now);
+      // Exactly TWO permanent cat instances
+      const cat1 = {
+        id: 1,
+        variant: 0,
+        size: isMobile ? 26 : 34,
+        height: Math.round((isMobile ? 26 : 34) * (18 / 28)),
+        baseSpeed: isMobile ? 42 : 58,
+        speed: isMobile ? 42 : 58,
+        x: Math.max(30, vw * 0.18),
+        y: Math.max(30, vh * 0.68),
+        angle: -0.62, // heading up-right (~ -35 deg)
+        targetAngle: -0.62,
+        vx: 0,
+        vy: 0,
+        facing: 'right',
+        nextTurnTime: 1800,
+        lastDustTime: 0,
+        element: null
+      };
+
+      const cat2 = {
+        id: 2,
+        variant: 1,
+        size: isMobile ? 22 : 30,
+        height: Math.round((isMobile ? 22 : 30) * (18 / 28)),
+        baseSpeed: isMobile ? 36 : 48,
+        speed: isMobile ? 36 : 48,
+        x: Math.max(30, Math.min(vw - 60, vw * 0.82)),
+        y: Math.max(30, Math.min(vh - 60, vh * 0.28)),
+        angle: 2.52, // heading down-left (~ 144 deg)
+        targetAngle: 2.52,
+        vx: 0,
+        vy: 0,
+        facing: 'left',
+        nextTurnTime: 3200,
+        lastDustTime: 0,
+        element: null
+      };
+
+      cat1.vx = Math.cos(cat1.angle) * cat1.speed;
+      cat1.vy = Math.sin(cat1.angle) * cat1.speed;
+
+      cat2.vx = Math.cos(cat2.angle) * cat2.speed;
+      cat2.vy = Math.sin(cat2.angle) * cat2.speed;
+
+      // Construct exactly 2 DOM elements
+      buildCatDOM(cat1);
+      buildCatDOM(cat2);
+
+      const cats = [cat1, cat2];
+
+      function updateCat(cat, otherCat, dt, now) {
+        // 1. Organic Wander Intention
+        if (now > cat.nextTurnTime) {
+          const angleShift = (Math.random() - 0.5) * Math.PI * 1.15;
+          cat.targetAngle = cat.angle + angleShift;
+          cat.speed = cat.baseSpeed * (0.88 + Math.random() * 0.24);
+          cat.nextTurnTime = now + (2200 + Math.random() * 2800);
+        }
+
+        // 2. Soft Boundary Avoidance Steering
+        const marginX = vw < 640 ? 25 : 55;
+        const marginY = vw < 640 ? 25 : 55;
+        let boundarySteerX = 0;
+        let boundarySteerY = 0;
+
+        if (cat.x < marginX) {
+          boundarySteerX += ((marginX - cat.x) / marginX) * 2.8;
+        } else if (cat.x > vw - marginX - cat.size) {
+          boundarySteerX -= ((cat.x - (vw - marginX - cat.size)) / marginX) * 2.8;
+        }
+
+        if (cat.y < marginY) {
+          boundarySteerY += ((marginY - cat.y) / marginY) * 2.8;
+        } else if (cat.y > vh - marginY - cat.height) {
+          boundarySteerY -= ((cat.y - (vh - marginY - cat.height)) / marginY) * 2.8;
+        }
+
+        // 3. Inter-Cat Separation (gentle repulsion so they don't stack)
+        let sepX = 0;
+        let sepY = 0;
+        if (otherCat) {
+          const dx = cat.x - otherCat.x;
+          const dy = cat.y - otherCat.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 0 && dist < 65) {
+            const force = ((65 - dist) / 65) * 1.8;
+            sepX = (dx / dist) * force;
+            sepY = (dy / dist) * force;
           }
         }
 
-        // 1. Seek Steering toward waypoint
-        let steerX = 0;
-        let steerY = 0;
-        if (distToTarget > 1) {
-          const desiredVx = ((cat.targetX - cat.x) / distToTarget) * cat.speed;
-          const desiredVy = ((cat.targetY - cat.y) / distToTarget) * cat.speed;
-          steerX += (desiredVx - cat.vx) * 1.3;
-          steerY += (desiredVy - cat.vy) * 1.3;
+        // 4. Calculate Desired Velocity Vector
+        let desiredVx = Math.cos(cat.targetAngle) * cat.speed + (boundarySteerX + sepX) * cat.speed;
+        let desiredVy = Math.sin(cat.targetAngle) * cat.speed + (boundarySteerY + sepY) * cat.speed;
+
+        const desLen = Math.hypot(desiredVx, desiredVy);
+        if (desLen > 0.001) {
+          desiredVx = (desiredVx / desLen) * cat.speed;
+          desiredVy = (desiredVy / desLen) * cat.speed;
         }
 
-        // 2. Organic Wander Noise (curved natural paths)
-        cat.wanderAngle += (Math.random() - 0.5) * 1.2 * dt;
-        steerX += Math.cos(cat.wanderAngle) * (cat.speed * 0.42);
-        steerY += Math.sin(cat.wanderAngle) * (cat.speed * 0.28);
+        // 5. Smooth Steering Acceleration (No abrupt direction changes)
+        const steerFactor = 3.2; // response rate
+        cat.vx += (desiredVx - cat.vx) * Math.min(1, steerFactor * dt);
+        cat.vy += (desiredVy - cat.vy) * Math.min(1, steerFactor * dt);
 
-        // 3. Boundary Soft Steering (steer away naturally before hitting edge)
-        const bX = cat.marginX;
-        const bY = cat.marginY;
-        if (cat.x < bX) steerX += ((bX - cat.x) / bX) * cat.speed * 2.4;
-        if (cat.x > vw - bX - cat.size) steerX -= ((cat.x - (vw - bX - cat.size)) / bX) * cat.speed * 2.4;
-        if (cat.y < bY) steerY += ((bY - cat.y) / bY) * cat.speed * 2.4;
-        if (cat.y > vh - bY - cat.height) steerY -= ((cat.y - (vh - bY - cat.height)) / bY) * cat.speed * 2.4;
+        cat.angle = Math.atan2(cat.vy, cat.vx);
 
-        // 4. Separation from other cats (gentle collision avoidance)
-        for (let j = 0; j < cats.length; j++) {
-          const other = cats[j];
-          if (other === cat) continue;
-          const odx = cat.x - other.x;
-          const ody = cat.y - other.y;
-          const odist = Math.hypot(odx, ody);
-          if (odist > 0 && odist < 65) {
-            const push = ((65 - odist) / 65) * cat.speed * 1.8;
-            steerX += (odx / odist) * push;
-            steerY += (ody / odist) * push;
-          }
-        }
-
-        // 5. Clamp steering force to create smooth turning arcs
-        const steerLen = Math.hypot(steerX, steerY);
-        const maxSteer = 135; // px/s²
-        if (steerLen > maxSteer) {
-          steerX = (steerX / steerLen) * maxSteer;
-          steerY = (steerY / steerLen) * maxSteer;
-        }
-
-        cat.vx += steerX * dt;
-        cat.vy += steerY * dt;
-
-        // Normalize velocity vector to currentSpeed
-        const curLen = Math.hypot(cat.vx, cat.vy);
-        if (curLen > 0.001) {
-          cat.vx = (cat.vx / curLen) * cat.currentSpeed;
-          cat.vy = (cat.vy / curLen) * cat.currentSpeed;
-        }
-
+        // 6. Position Update & Screen Boundary Clamping
         cat.x += cat.vx * dt;
         cat.y += cat.vy * dt;
 
-        // Safe screen bounds clamp
-        cat.x = Math.max(10, Math.min(vw - cat.size - 10, cat.x));
-        cat.y = Math.max(10, Math.min(vh - cat.height - 10, cat.y));
+        cat.x = Math.max(5, Math.min(vw - cat.size - 5, cat.x));
+        cat.y = Math.max(5, Math.min(vh - cat.height - 5, cat.y));
 
-        // Facing direction based on horizontal velocity
+        // 7. Update Facing Direction (horizontal flip only)
         if (cat.vx < -2 && cat.facing !== 'left') {
           cat.facing = 'left';
           cat.element.classList.add('running-cat-facing-left');
@@ -3378,130 +3243,50 @@
           cat.facing = 'right';
           cat.element.classList.remove('running-cat-facing-left');
         }
-      }
 
-      function updateCat(cat, dt, now) {
-        // Proximity detection with normal cursor
-        const interactionRadius = cat.size * 1.1;
-        const catCenterX = cat.x + cat.size / 2;
-        const catCenterY = cat.y + cat.height / 2;
-        const distToMouse = Math.hypot(mouseX - catCenterX, mouseY - catCenterY);
-
-        // When user cursor reaches cat
-        if (distToMouse < interactionRadius && cat.state !== 'SITTING' && now > cat.sitCooldownUntil) {
-          cat.state = 'SITTING';
-          cat.targetSpeed = 0;
-          cat.element.classList.add('is-sitting');
-          const sitDuration = 2500 + Math.random() * 2000;
-          cat.sitUntil = now + sitDuration;
-        }
-
-        // State Machine
-        if (cat.state === 'SITTING') {
-          cat.currentSpeed += (0 - cat.currentSpeed) * Math.min(1, dt * 10);
-          if (now > cat.sitUntil) {
-            // Stand up and resume wandering
-            cat.state = 'WANDERING';
-            cat.targetSpeed = cat.baseSpeed;
-            cat.sitCooldownUntil = now + 1800;
-            cat.element.classList.remove('is-sitting');
-            chooseTarget(cat, now);
-          }
-        } else if (cat.state === 'PAUSING') {
-          cat.currentSpeed += (0 - cat.currentSpeed) * Math.min(1, dt * 8);
-          if (now > cat.pauseUntil) {
-            cat.state = 'WANDERING';
-            cat.targetSpeed = cat.baseSpeed;
-            chooseTarget(cat, now);
-          }
-        } else {
-          // WANDERING
-          cat.currentSpeed += (cat.targetSpeed - cat.currentSpeed) * Math.min(1, dt * 5);
-          steerCat(cat, dt, now);
-
-          // Subtle dust particles while running
-          if (cat.currentSpeed > 25 && now - cat.lastDustTime > 390 && cat.x > 25 && cat.x < vw - 25) {
-            cat.lastDustTime = now;
-            const dust = document.createElement('div');
-            dust.className = 'cat-dust-puff';
-            dust.style.left = `${cat.facing === 'right' ? cat.x + 4 : cat.x + cat.size - 4}px`;
-            dust.style.top = `${cat.y + cat.height - 4}px`;
-            layer.appendChild(dust);
-            setTimeout(() => dust.remove(), 450);
-          }
-        }
-
-        // Render GPU transform
+        // 8. Render GPU transform
         cat.element.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
 
-        // Check gentle retirement
-        if (!cat.isRetiring && now - cat.birthTime > cat.lifeSpan) {
-          cat.isRetiring = true;
-          cat.element.classList.remove('is-visible');
-          setTimeout(() => {
-            removeCat(cat);
-          }, 800);
+        // 9. Subtle dust puff behind rear paws
+        if (now - cat.lastDustTime > 390 && cat.x > 25 && cat.x < vw - 25) {
+          cat.lastDustTime = now;
+          const dust = document.createElement('div');
+          dust.className = 'cat-dust-puff';
+          dust.style.left = `${cat.facing === 'right' ? cat.x + 3 : cat.x + cat.size - 3}px`;
+          dust.style.top = `${cat.y + cat.height - 3}px`;
+          layer.appendChild(dust);
+          setTimeout(() => dust.remove(), 450);
         }
       }
 
-      function removeCat(cat) {
-        const idx = cats.indexOf(cat);
-        if (idx !== -1) {
-          cats.splice(idx, 1);
-        }
-        if (cat.element && cat.element.parentNode) {
-          cat.element.remove();
-        }
-      }
+      let lastTime = performance.now();
+      let animFrameId = null;
 
       function animationLoop(now) {
         const dt = Math.min(0.08, (now - lastTime) / 1000);
         lastTime = now;
 
-        for (let i = cats.length - 1; i >= 0; i--) {
-          updateCat(cats[i], dt, now);
-        }
+        updateCat(cat1, cat2, dt, now);
+        updateCat(cat2, cat1, dt, now);
 
         animFrameId = requestAnimationFrame(animationLoop);
       }
 
-      function scheduleNextSpawn() {
-        const isMobile = vw < 640;
-        const maxCats = isMobile ? 1 : 3;
-        const minDelay = isMobile ? 18000 : 10000;
-        const randomExtra = isMobile ? 16000 : 12000;
-
-        spawnTimerId = setTimeout(() => {
-          if (cats.length < maxCats) {
-            createCat();
-          }
-          scheduleNextSpawn();
-        }, minDelay + Math.random() * randomExtra);
-      }
-
-      // Start engine loop
-      lastTime = performance.now();
       animFrameId = requestAnimationFrame(animationLoop);
 
-      // Initial cat spawn after 2.4s
-      setTimeout(() => {
-        createCat();
-        // Desktop companion cat after 9s
-        if (vw >= 640) {
-          setTimeout(() => {
-            if (cats.length < 2) createCat();
-          }, 9000);
-        }
-        scheduleNextSpawn();
-      }, 2400);
+      // Viewport resize handling (preserves cats without resetting or duplicating)
+      window.addEventListener('resize', () => {
+        vw = window.innerWidth;
+        vh = window.innerHeight;
+      }, { passive: true });
 
-      // Visibility handling
+      // Tab visibility management
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-          clearTimeout(spawnTimerId);
+          if (animFrameId) cancelAnimationFrame(animFrameId);
         } else {
           lastTime = performance.now();
-          scheduleNextSpawn();
+          animFrameId = requestAnimationFrame(animationLoop);
         }
       });
     }
