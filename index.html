@@ -2133,17 +2133,25 @@
         <div class="heatmap-wrapper">
           <div class="heatmap-title-row">
             <span>Contribution Heatmap</span>
-            <span>2025 &ndash; 2026</span>
+            <span id="heatmap-year-label">2025 &ndash; 2026</span>
           </div>
 
           <div class="heatmap-image-container" id="heatmap-container">
-            <!-- Dynamic Image with Fallback Generator -->
-            <img 
-              id="github-heatmap-img" 
-              src="https://ghchart.rshah.org/8B5CF6/RavendraPatel09" 
-              alt="Ravendra Patel GitHub Contributions Graph"
-              loading="lazy"
-            />
+            <div id="heatmap-tooltip" class="heatmap-tooltip" role="tooltip" aria-hidden="true"></div>
+            <!-- Dynamic SVG Heatmap rendered from real github-contributions.json -->
+          </div>
+
+          <div class="heatmap-footer-row">
+            <span id="heatmap-total-count">1,382 contributions in the last year</span>
+            <div class="heatmap-legend" aria-hidden="true">
+              <span>Less</span>
+              <span class="legend-box" style="background: #18181b;"></span>
+              <span class="legend-box" style="background: #4c1d95;"></span>
+              <span class="legend-box" style="background: #6d28d9;"></span>
+              <span class="legend-box" style="background: #8b5cf6;"></span>
+              <span class="legend-box" style="background: #06b6d4;"></span>
+              <span>More</span>
+            </div>
           </div>
         </div>
 
@@ -2307,8 +2315,8 @@
       // 2. Typing Effect Tagline
       initTypewriter();
 
-      // 3. GitHub Heatmap & Resilient Fallback
-      initHeatmapFallback();
+      // 3. Real Live GitHub Heatmap
+      initRealGitHubHeatmap();
 
       // 4. Live Public GitHub Repositories
       initGitHubRepos();
