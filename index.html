@@ -1526,6 +1526,115 @@
       .reveal { opacity: 1 !important; transform: none !important; }
     }
 
+    /* ==========================================================================
+       RUNNING CATS EASTER EGG LAYER (FIXED VIEWPORT)
+       ========================================================================== */
+    #running-cats-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 25; /* Above background/cards, below fixed header/modals */
+    }
+
+    .running-cat-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      will-change: transform;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .running-cat-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: catRunningBob 0.32s ease-in-out infinite;
+    }
+
+    .running-cat-facing-left {
+      transform: scaleX(-1);
+    }
+
+    .running-cat-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      shape-rendering: crispEdges;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+    }
+
+    .cat-shadow {
+      width: 65%;
+      height: 3px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 75%);
+      border-radius: 50%;
+      margin-top: -1px;
+    }
+
+    /* 4-Frame Keyframe Cycling */
+    @keyframes showCatFrame0 { 0%, 24.9% { opacity: 1; visibility: visible; } 25%, 100% { opacity: 0; visibility: hidden; } }
+    @keyframes showCatFrame1 { 0%, 24.9% { opacity: 0; visibility: hidden; } 25%, 49.9% { opacity: 1; visibility: visible; } 50%, 100% { opacity: 0; visibility: hidden; } }
+    @keyframes showCatFrame2 { 0%, 49.9% { opacity: 0; visibility: hidden; } 50%, 74.9% { opacity: 1; visibility: visible; } 75%, 100% { opacity: 0; visibility: hidden; } }
+    @keyframes showCatFrame3 { 0%, 74.9% { opacity: 0; visibility: hidden; } 75%, 100% { opacity: 1; visibility: visible; } }
+
+    .cat-frame-0 { animation: showCatFrame0 0.32s infinite steps(1); }
+    .cat-frame-1 { animation: showCatFrame1 0.32s infinite steps(1); }
+    .cat-frame-2 { animation: showCatFrame2 0.32s infinite steps(1); }
+    .cat-frame-3 { animation: showCatFrame3 0.32s infinite steps(1); }
+
+    @keyframes catRunningBob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    /* Tiny pixel dust particle behind feet */
+    .cat-dust-puff {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 1px;
+      pointer-events: none;
+      animation: catDustFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes catDustFade {
+      0% { opacity: 0.8; transform: scale(1) translate(0, 0); }
+      100% { opacity: 0; transform: scale(0.2) translate(-6px, -4px); }
+    }
+
+    /* Optional Tiny Speech Bubble */
+    .cat-bubble {
+      position: absolute;
+      top: -18px;
+      padding: 1px 5px;
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #e4e4e7;
+      white-space: nowrap;
+      pointer-events: none;
+      animation: bubbleFloat 1.2s ease-out forwards;
+      z-index: 26;
+    }
+
+    @keyframes bubbleFloat {
+      0% { opacity: 0; transform: translateY(2px) scale(0.8); }
+      20% { opacity: 1; transform: translateY(-2px) scale(1); }
+      80% { opacity: 1; transform: translateY(-6px) scale(1); }
+      100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
+    }
+
     a:focus-visible, button:focus-visible {
       outline: 2px solid var(--teal);
       outline-offset: 2px;
@@ -2299,6 +2408,9 @@
     </div>
   </footer>
 
+  <!-- Running Cats Easter Egg Layer (Fixed Viewport) -->
+  <div id="running-cats-layer" aria-hidden="true"></div>
+
   <!-- Toast Notification Feedback -->
   <div id="toast" class="toast" role="alert" aria-live="polite">
     <span style="color: var(--emerald); font-size: 1rem;">✓</span>
@@ -2341,6 +2453,9 @@
 
       // 11. Scroll Reveal Animations
       initScrollReveal();
+
+      // 12. Full-Screen Running White Cats Easter Egg
+      initRunningCats();
     });
 
     /**
@@ -2939,6 +3054,246 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    /**
+     * 12. Full-Screen Running Pixel-Art White Cats Easter Egg
+     */
+    function initRunningCats() {
+      if (typeof window === 'undefined') return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const layer = document.getElementById('running-cats-layer');
+      if (!layer) return;
+
+      let activeCatsCount = 0;
+      let spawnTimerId = null;
+
+      function getCatSvg(variant) {
+        const shadowId = 'cat-shadow-' + Math.random().toString(36).substr(2, 7);
+        const collar = variant === 1 ? '<rect x="15" y="8" width="2" height="4" fill="#8b5cf6"/>' : '';
+        const earColor = variant === 2 ? '#ec4899' : '#f472b6';
+        const tailHigher = variant === 2;
+
+        return `
+          <svg class="running-cat-svg" viewBox="0 0 28 18" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#000000" flood-opacity="0.6"/>
+              </filter>
+            </defs>
+
+            <!-- Frame 0: Stride Extension -->
+            <g class="cat-frame cat-frame-0" filter="url(#${shadowId})">
+              ${tailHigher ? '<rect x="1" y="2" width="2" height="3" fill="#ffffff"/><rect x="3" y="4" width="3" height="2" fill="#ffffff"/>' : '<rect x="2" y="5" width="2" height="2" fill="#ffffff"/><rect x="4" y="6" width="3" height="2" fill="#ffffff"/><rect x="1" y="3" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="6" y="6" width="11" height="6" fill="#ffffff"/>
+              <rect x="7" y="5" width="9" height="1" fill="#ffffff"/>
+              ${collar}
+              <rect x="15" y="3" width="7" height="6" fill="#ffffff"/>
+              <rect x="16" y="2" width="5" height="1" fill="#ffffff"/>
+              <rect x="16" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="20" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="17" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="21" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="20" y="5" width="1" height="2" fill="#09090b"/>
+              <rect x="22" y="6" width="1" height="1" fill="#f472b6"/>
+              <rect x="16" y="12" width="2" height="4" fill="#ffffff"/>
+              <rect x="18" y="13" width="3" height="2" fill="#ffffff"/>
+              <rect x="4" y="11" width="3" height="2" fill="#ffffff"/>
+              <rect x="2" y="12" width="2" height="3" fill="#e4e4e7"/>
+            </g>
+
+            <!-- Frame 1: Contact / Landing -->
+            <g class="cat-frame cat-frame-1" filter="url(#${shadowId})">
+              ${tailHigher ? '<rect x="2" y="1" width="2" height="3" fill="#ffffff"/><rect x="4" y="4" width="2" height="2" fill="#ffffff"/>' : '<rect x="3" y="4" width="2" height="3" fill="#ffffff"/><rect x="5" y="6" width="2" height="2" fill="#ffffff"/><rect x="2" y="2" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="6" y="7" width="11" height="6" fill="#ffffff"/>
+              <rect x="7" y="6" width="9" height="1" fill="#ffffff"/>
+              ${collar}
+              <rect x="15" y="4" width="7" height="6" fill="#ffffff"/>
+              <rect x="16" y="3" width="5" height="1" fill="#ffffff"/>
+              <rect x="16" y="1" width="2" height="2" fill="#ffffff"/>
+              <rect x="20" y="1" width="2" height="2" fill="#ffffff"/>
+              <rect x="17" y="2" width="1" height="1" fill="${earColor}"/>
+              <rect x="21" y="2" width="1" height="1" fill="${earColor}"/>
+              <rect x="20" y="6" width="1" height="2" fill="#09090b"/>
+              <rect x="22" y="7" width="1" height="1" fill="#f472b6"/>
+              <rect x="16" y="13" width="2" height="4" fill="#ffffff"/>
+              <rect x="18" y="13" width="2" height="3" fill="#e4e4e7"/>
+              <rect x="6" y="13" width="2" height="3" fill="#ffffff"/>
+              <rect x="8" y="13" width="2" height="2" fill="#e4e4e7"/>
+            </g>
+
+            <!-- Frame 2: Compression / Stride Pass -->
+            <g class="cat-frame cat-frame-2" filter="url(#${shadowId})">
+              ${tailHigher ? '<rect x="3" y="1" width="2" height="3" fill="#ffffff"/><rect x="5" y="4" width="2" height="2" fill="#ffffff"/>' : '<rect x="4" y="4" width="2" height="3" fill="#ffffff"/><rect x="6" y="6" width="2" height="2" fill="#ffffff"/><rect x="3" y="2" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="7" y="6" width="10" height="6" fill="#ffffff"/>
+              <rect x="8" y="5" width="8" height="1" fill="#ffffff"/>
+              ${collar}
+              <rect x="15" y="3" width="7" height="6" fill="#ffffff"/>
+              <rect x="16" y="2" width="5" height="1" fill="#ffffff"/>
+              <rect x="16" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="20" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="17" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="21" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="20" y="5" width="1" height="2" fill="#09090b"/>
+              <rect x="22" y="6" width="1" height="1" fill="#f472b6"/>
+              <rect x="15" y="12" width="2" height="4" fill="#ffffff"/>
+              <rect x="13" y="13" width="2" height="2" fill="#e4e4e7"/>
+              <rect x="8" y="12" width="2" height="4" fill="#ffffff"/>
+              <rect x="10" y="13" width="2" height="2" fill="#e4e4e7"/>
+            </g>
+
+            <!-- Frame 3: Launch / Push -->
+            <g class="cat-frame cat-frame-3" filter="url(#${shadowId})">
+              ${tailHigher ? '<rect x="2" y="2" width="2" height="3" fill="#ffffff"/><rect x="4" y="5" width="2" height="2" fill="#ffffff"/>' : '<rect x="3" y="5" width="2" height="2" fill="#ffffff"/><rect x="5" y="6" width="2" height="2" fill="#ffffff"/><rect x="1" y="4" width="2" height="2" fill="#ffffff"/>'}
+              <rect x="7" y="6" width="10" height="6" fill="#ffffff"/>
+              <rect x="8" y="5" width="8" height="1" fill="#ffffff"/>
+              ${collar}
+              <rect x="15" y="3" width="7" height="6" fill="#ffffff"/>
+              <rect x="16" y="2" width="5" height="1" fill="#ffffff"/>
+              <rect x="16" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="20" y="0" width="2" height="2" fill="#ffffff"/>
+              <rect x="17" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="21" y="1" width="1" height="1" fill="${earColor}"/>
+              <rect x="20" y="5" width="1" height="2" fill="#09090b"/>
+              <rect x="22" y="6" width="1" height="1" fill="#f472b6"/>
+              <rect x="17" y="12" width="3" height="2" fill="#ffffff"/>
+              <rect x="19" y="13" width="2" height="2" fill="#e4e4e7"/>
+              <rect x="5" y="12" width="3" height="2" fill="#ffffff"/>
+              <rect x="3" y="13" width="2" height="3" fill="#ffffff"/>
+            </g>
+          </svg>
+        `;
+      }
+
+      function spawnCat(forceDirection = null) {
+        const isMobile = window.innerWidth < 640;
+        const maxCats = isMobile ? 1 : 3;
+
+        if (activeCatsCount >= maxCats) return;
+        if (document.hidden) return;
+
+        activeCatsCount++;
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        const direction = forceDirection || (Math.random() > 0.5 ? 'left-to-right' : 'right-to-left');
+        const variant = Math.floor(Math.random() * 3);
+        const size = isMobile ? (26 + Math.random() * 4) : (32 + Math.random() * 8);
+
+        // Safe vertical bounds
+        const minY = vh * 0.12;
+        const maxY = vh * 0.86;
+        const startY = minY + Math.random() * (maxY - minY);
+        const endY = startY + (Math.random() * 40 - 20);
+
+        const startX = direction === 'left-to-right' ? -65 : (vw + 65);
+        const endX = direction === 'left-to-right' ? (vw + 65) : -65;
+
+        // Speed: 110-165 px/sec
+        const speed = 110 + Math.random() * 55;
+        const distance = Math.abs(endX - startX);
+        const duration = (distance / speed) * 1000;
+
+        const catContainer = document.createElement('div');
+        catContainer.className = `running-cat-container ${direction === 'right-to-left' ? 'running-cat-facing-left' : ''}`;
+        catContainer.style.width = `${Math.round(size)}px`;
+        catContainer.style.height = `${Math.round(size * (18 / 28))}px`;
+
+        const inner = document.createElement('div');
+        inner.className = 'running-cat-inner';
+        inner.innerHTML = `
+          ${getCatSvg(variant)}
+          <div class="cat-shadow"></div>
+        `;
+
+        // 12% chance for cute text bubble midway
+        if (Math.random() < 0.12) {
+          setTimeout(() => {
+            if (catContainer.isConnected) {
+              const bubble = document.createElement('div');
+              bubble.className = 'cat-bubble';
+              const textList = ['meow.', '🐾', 'purr~', 'nyan'];
+              bubble.textContent = textList[Math.floor(Math.random() * textList.length)];
+              catContainer.appendChild(bubble);
+            }
+          }, duration * 0.45);
+        }
+
+        catContainer.appendChild(inner);
+        layer.appendChild(catContainer);
+
+        // Optional tiny pixel dust particles
+        const dustInterval = setInterval(() => {
+          if (!catContainer.isConnected) {
+            clearInterval(dustInterval);
+            return;
+          }
+          const rect = catContainer.getBoundingClientRect();
+          if (rect.left > 10 && rect.left < vw - 10) {
+            const dust = document.createElement('div');
+            dust.className = 'cat-dust-puff';
+            dust.style.left = `${direction === 'left-to-right' ? rect.left + 4 : rect.right - 4}px`;
+            dust.style.top = `${rect.bottom - 4}px`;
+            layer.appendChild(dust);
+            setTimeout(() => dust.remove(), 450);
+          }
+        }, 360);
+
+        // Execute smooth GPU transform
+        const anim = catContainer.animate([
+          { transform: `translate3d(${startX}px, ${startY}px, 0)` },
+          { transform: `translate3d(${endX}px, ${endY}px, 0)` }
+        ], {
+          duration: duration,
+          easing: 'linear'
+        });
+
+        const cleanup = () => {
+          clearInterval(dustInterval);
+          if (catContainer.parentNode) catContainer.remove();
+          activeCatsCount = Math.max(0, activeCatsCount - 1);
+        };
+
+        anim.onfinish = cleanup;
+        anim.oncancel = cleanup;
+      }
+
+      function scheduleNextSpawn() {
+        const isMobile = window.innerWidth < 640;
+        const minDelay = isMobile ? 12000 : 8000;
+        const randomExtra = isMobile ? 12000 : 10000;
+        const nextDelay = minDelay + Math.random() * randomExtra;
+
+        spawnTimerId = setTimeout(() => {
+          spawnCat();
+
+          // 30% chance for a companion cat in the opposite direction (crossing paths!)
+          if (!isMobile && Math.random() < 0.3) {
+            setTimeout(() => {
+              spawnCat();
+            }, 2000 + Math.random() * 2000);
+          }
+
+          scheduleNextSpawn();
+        }, nextDelay);
+      }
+
+      // Initial spawn after 3.2s of page load
+      setTimeout(() => {
+        spawnCat('left-to-right');
+        scheduleNextSpawn();
+      }, 3200);
+
+      // Clean handling when user tabs away and returns
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          clearTimeout(spawnTimerId);
+        } else {
+          scheduleNextSpawn();
+        }
+      });
     }
   </script>
 </body>
