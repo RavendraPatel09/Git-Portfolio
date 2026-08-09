@@ -1,10 +1,7 @@
 # Ravendra Patel — Developer Portfolio v2
-<<<<<<< HEAD
-=======
 
-> **Software Developer · Full-Stack & Systems**  
+> **Software Developer · Full-Stack & Systems**
 
->>>>>>> 59aaf1de9c96c7b4460a7dad17d6b59959c38fab
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
@@ -37,7 +34,6 @@
 - **Resilient GitHub Contribution Heatmap**: Dedicated *"Building in public"* section featuring your GitHub contribution graph with an automatic, styled SVG generator fallback so it never displays a broken image.
 - **Interactive Micro-Interactions**: Custom desktop cursor, card spotlight mouse reflections, smooth scroll-spy navigation, and one-click copy email with feedback toast.
 - **WCAG Accessibility & Reduced Motion**: Full `@media (prefers-reduced-motion: reduce)` support and visible focus outlines.
-
 
 ---
 
