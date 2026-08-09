@@ -1,8 +1,4 @@
 # Ravendra Patel — Developer Portfolio v2
-
-> **Software Developer · Full-Stack & Systems**  
-> Premium, animated, colorful-yet-minimal developer portfolio for Ravendra Patel. Built as a single, zero-dependency, production-ready `index.html` file inspired by [nitin.vision](https://nitin.vision/).
-
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
@@ -36,32 +32,6 @@
 - **Interactive Micro-Interactions**: Custom desktop cursor, card spotlight mouse reflections, smooth scroll-spy navigation, and one-click copy email with feedback toast.
 - **WCAG Accessibility & Reduced Motion**: Full `@media (prefers-reduced-motion: reduce)` support and visible focus outlines.
 
----
-
-## 🚀 Quick Start & Local Preview
-
-Simply open `index.html` directly in any web browser!
-
-Or run a local HTTP server:
-```bash
-# Python 3
-python3 -m http.server 8000
-```
-Then visit [http://localhost:8000](http://localhost:8000).
-
----
-
-## 🌐 1-Minute GitHub Pages Deployment
-
-1. Commit and push:
-   ```bash
-   git add .
-   git commit -m "Deploy Ravendra Patel portfolio v2"
-   git push origin main
-   ```
-2. In your repository on GitHub, navigate to **Settings** &rarr; **Pages**.
-3. Under **Build and deployment** &gt; **Branch**, select `main` (or `master`) and directory `/ (root)`.
-4. Click **Save**. Your site will be live at `https://ravendrapatel09.github.io/Git-Portfolio/`.
 
 ---
 
