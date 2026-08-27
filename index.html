@@ -2218,7 +2218,8 @@
         <!-- Live Repositories Grid -->
         <div>
           <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">
-            Public Repositories
+            <span>Public Repositories</span>
+            <span id="github-repos-sync-status" style="float: right; letter-spacing: 0.08em; text-transform: none;">Syncing...</span>
           </div>
           <div class="repos-grid" id="repos-container">
             <!-- Loaded via JavaScript with static fallback -->
@@ -2530,6 +2531,9 @@
       // Update Total Contributions counter
       if (totalLabel && typeof data.totalContributions === 'number') {
         totalLabel.textContent = `${data.totalContributions.toLocaleString()} contributions in the last year`;
+        if (data.updatedAt) {
+          totalLabel.textContent += ` | synced ${new Date(data.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+        }
       }
 
       // Generate Dynamic Month Labels
@@ -2681,6 +2685,7 @@
     async function initGitHubRepos() {
       const container = document.getElementById('repos-container');
       if (!container) return;
+      const syncStatus = document.getElementById('github-repos-sync-status');
 
       const fallbackRepos = [
         {
@@ -2755,14 +2760,16 @@
       };
 
       // Try LocalStorage Cache
-      const CACHE_KEY = 'rp_repos_v2';
-      const CACHE_TIME = 'rp_repos_time_v2';
+      const CACHE_KEY = 'rp_repos_v3';
+      const CACHE_TIME = 'rp_repos_time_v3';
+      const CACHE_DURATION = 15 * 60 * 1000;
       const cached = localStorage.getItem(CACHE_KEY);
       const cachedTime = localStorage.getItem(CACHE_TIME);
 
-      if (cached && cachedTime && (Date.now() - parseInt(cachedTime, 10) < 3600000)) {
+      if (cached && cachedTime && (Date.now() - parseInt(cachedTime, 10) < CACHE_DURATION)) {
         try {
           renderRepos(JSON.parse(cached));
+          if (syncStatus) syncStatus.textContent = 'Synced recently';
           return;
         } catch (e) {
           // ignore error
@@ -2771,15 +2778,17 @@
 
       // Fetch Live API
       try {
-        const res = await fetch('https://api.github.com/users/RavendraPatel09/repos?sort=updated&per_page=6');
+        const res = await fetch('https://api.github.com/users/RavendraPatel09/repos?sort=updated&per_page=100');
         if (!res.ok) throw new Error('API limit');
         const data = await res.json();
-        const filtered = data.filter(d => d.name !== 'RavendraPatel09' && !d.fork).slice(0, 6);
+        const filtered = data.filter(d => d.name !== 'RavendraPatel09' && !d.fork);
         localStorage.setItem(CACHE_KEY, JSON.stringify(filtered));
         localStorage.setItem(CACHE_TIME, Date.now().toString());
         renderRepos(filtered);
+        if (syncStatus) syncStatus.textContent = `Synced ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
       } catch (err) {
         renderRepos(fallbackRepos);
+        if (syncStatus) syncStatus.textContent = 'Using fallback data';
       }
     }
 
