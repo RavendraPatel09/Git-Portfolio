@@ -454,6 +454,55 @@
       padding-top: 0.5rem;
     }
 
+    .hero-signal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      max-width: 620px;
+    }
+
+    .hero-signal {
+      min-height: 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.9rem 1rem;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      transition: transform 0.25s var(--ease), border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .hero-signal:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .hero-signal-label {
+      color: var(--subtle);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-signal-value {
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .hero-signal-value strong {
+      color: var(--teal);
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
     .btn-primary {
       position: relative;
       display: inline-flex;
@@ -1696,6 +1745,21 @@
               <span>GitHub</span>
               <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--subtle)">↗</span>
             </a>
+          </div>
+
+          <div class="hero-signal-grid" aria-label="Working profile">
+            <div class="hero-signal">
+              <span class="hero-signal-label">Focus</span>
+              <span class="hero-signal-value"><strong>03</strong> product lanes</span>
+            </div>
+            <div class="hero-signal">
+              <span class="hero-signal-label">Based in</span>
+              <span class="hero-signal-value">Madhya Pradesh, IN</span>
+            </div>
+            <div class="hero-signal">
+              <span class="hero-signal-label">Working style</span>
+              <span class="hero-signal-value">Build, test, refine</span>
+            </div>
           </div>
         </div>
 
