@@ -1489,6 +1489,60 @@
       border-top: 1px solid var(--border-subtle);
     }
 
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--border-subtle);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .process-step {
+      min-height: 190px;
+      padding: 1.75rem;
+      background: var(--bg-surface);
+      transition: background 0.25s ease;
+    }
+
+    .process-step:hover { background: var(--bg-surface-elevated); }
+
+    .process-step-number {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+    }
+
+    .process-step-number::after {
+      content: '↗';
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .process-step-title {
+      margin: 2.5rem 0 0.65rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .process-step-copy {
+      max-width: 270px;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    .process-note {
+      margin-top: 1.25rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+    }
+
     /* 06 — CONTACT SECTION */
     .contact-box {
       padding: 3.5rem;
@@ -1666,6 +1720,7 @@
       .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .currently-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: 1fr; }
       .contact-cards-row { grid-template-columns: 1fr; }
       .nav-links { display: none; }
       .mobile-toggle { display: block; }
@@ -1676,6 +1731,8 @@
       .section { padding: 4rem 0; }
       .hero-title { font-size: 2.25rem; }
       .project-card { padding: 1.5rem; }
+      .process-step { min-height: 0; padding: 1.5rem; }
+      .process-step-title { margin-top: 1.75rem; }
       .github-box { padding: 1.5rem; }
       .contact-box { padding: 1.75rem; }
       .status-badge { display: none; }
@@ -2556,6 +2613,36 @@
             <span class="tech-pill">WCAG 2.1</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- 05.5 — COLLABORATION PROCESS -->
+    <section id="process" class="section reveal" aria-label="Collaboration process">
+      <div class="section-label">
+        <span class="num">05.5</span>
+        <span class="line"></span>
+        <span>PROCESS &bull; HOW WE MOVE</span>
+      </div>
+
+      <div class="process-grid">
+        <article class="process-step">
+          <span class="process-step-number">01 / ALIGN</span>
+          <h2 class="process-step-title">Start with the real constraint.</h2>
+          <p class="process-step-copy">Clarify the audience, desired outcome, and technical context before choosing the shape of the solution.</p>
+          <p class="process-note">brief &bull; scope &bull; priorities</p>
+        </article>
+        <article class="process-step">
+          <span class="process-step-number">02 / BUILD</span>
+          <h2 class="process-step-title">Make progress visible early.</h2>
+          <p class="process-step-copy">Work in small, reviewable increments so decisions stay clear and useful feedback arrives while it matters.</p>
+          <p class="process-note">prototype &bull; implement &bull; review</p>
+        </article>
+        <article class="process-step">
+          <span class="process-step-number">03 / REFINE</span>
+          <h2 class="process-step-title">Ship with the edges covered.</h2>
+          <p class="process-step-copy">Polish the responsive states, accessibility details, performance, and documentation that make work last.</p>
+          <p class="process-note">test &bull; polish &bull; deliver</p>
+        </article>
       </div>
     </section>
 
