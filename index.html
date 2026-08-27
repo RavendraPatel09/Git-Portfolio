@@ -738,6 +738,79 @@
 
     .skill-group {
       display: flex;
+    .capability-intro {
+      max-width: 620px;
+      margin-bottom: 2rem;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .capability-card {
+      position: relative;
+      min-height: 210px;
+      padding: 1.5rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s var(--ease), border-color 0.3s ease;
+    }
+
+    .capability-card::after {
+      content: '';
+      position: absolute;
+      right: -28px;
+      bottom: -32px;
+      width: 100px;
+      height: 100px;
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 50%;
+    }
+
+    .capability-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-active);
+    }
+
+    .capability-index {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+    }
+
+    .capability-title {
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    .capability-copy {
+      color: var(--text-secondary);
+      font-size: 0.83rem;
+      line-height: 1.7;
+    }
+
+    .capability-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+    }
+
+    .capability-stack span::after { content: ' /'; color: var(--accent); }
+    .capability-stack span:last-child::after { content: ''; }
       flex-direction: column;
       gap: 1rem;
     }
@@ -1879,6 +1952,40 @@
             </li>
           </ul>
         </div>
+      </div>
+    </section>
+
+    <!-- 01.5 — CAPABILITIES SECTION -->
+    <section id="capabilities" class="section reveal" aria-label="Professional capabilities">
+      <div class="section-label">
+        <span class="num">01.5</span>
+        <span class="line"></span>
+        <span>CAPABILITIES &bull; HOW I CONTRIBUTE</span>
+      </div>
+
+      <p class="capability-intro">
+        I like working close to the real problem: shaping a clear interface, designing dependable data flows, and making the final experience feel considered.
+      </p>
+
+      <div class="capability-grid">
+        <article class="capability-card spotlight-card">
+          <span class="capability-index">01 / PRODUCT</span>
+          <h2 class="capability-title">Turn a rough idea into a usable product.</h2>
+          <p class="capability-copy">Translate user needs into focused flows, responsive interfaces, and practical features that are easy to understand.</p>
+          <div class="capability-stack"><span>React</span><span>TypeScript</span><span>Accessibility</span></div>
+        </article>
+        <article class="capability-card spotlight-card">
+          <span class="capability-index">02 / SYSTEMS</span>
+          <h2 class="capability-title">Build the dependable layer underneath.</h2>
+          <p class="capability-copy">Model data carefully, shape clean APIs, and connect services with an eye on clarity, security, and future change.</p>
+          <div class="capability-stack"><span>FastAPI</span><span>PostgreSQL</span><span>Docker</span></div>
+        </article>
+        <article class="capability-card spotlight-card">
+          <span class="capability-index">03 / CRAFT</span>
+          <h2 class="capability-title">Make the details earn their place.</h2>
+          <p class="capability-copy">Use testing, measured motion, and thoughtful feedback states to make software feel stable and complete.</p>
+          <div class="capability-stack"><span>Git</span><span>Testing</span><span>Performance</span></div>
+        </article>
       </div>
     </section>
 
