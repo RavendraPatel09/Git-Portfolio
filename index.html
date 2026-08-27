@@ -886,6 +886,58 @@
       border-bottom: 1px solid var(--border-subtle);
     }
 
+    .delivery-snapshot {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      margin-bottom: 2rem;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .snapshot-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 1rem 1.25rem;
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .snapshot-item:first-child { padding-left: 0; }
+    .snapshot-item:last-child { border-right: 0; }
+
+    .snapshot-value {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 500;
+    }
+
+    .snapshot-label {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      line-height: 1.35;
+    }
+
+    .snapshot-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--accent-emerald);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .snapshot-note::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
     .projects-title {
       font-size: 1.75rem;
       font-weight: 600;
@@ -2088,6 +2140,29 @@
           <button class="filter-btn" data-filter="fullstack">Full-Stack</button>
           <button class="filter-btn" data-filter="backend">Backend &amp; Systems</button>
           <button class="filter-btn" data-filter="ai-algo">AI &amp; Algorithms</button>
+        </div>
+      </div>
+
+      <div class="delivery-snapshot" aria-label="Project delivery snapshot">
+        <div class="snapshot-item">
+          <span class="snapshot-value">08</span>
+          <span class="snapshot-label">documented projects</span>
+          <span class="snapshot-note">active portfolio</span>
+        </div>
+        <div class="snapshot-item">
+          <span class="snapshot-value">03</span>
+          <span class="snapshot-label">system domains</span>
+          <span class="snapshot-note">product to infrastructure</span>
+        </div>
+        <div class="snapshot-item">
+          <span class="snapshot-value">06+</span>
+          <span class="snapshot-label">core language and data layers</span>
+          <span class="snapshot-note">typed where useful</span>
+        </div>
+        <div class="snapshot-item">
+          <span class="snapshot-value">01</span>
+          <span class="snapshot-label">accessibility-first platform</span>
+          <span class="snapshot-note">impact-led work</span>
         </div>
       </div>
 
