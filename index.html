@@ -66,6 +66,7 @@
       background-color: var(--bg);
       color: var(--text);
       scroll-behavior: smooth;
+      scroll-padding-top: 5rem;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -164,9 +165,10 @@
       padding: 0 1.5rem;
     }
 
-    .section {
+    .section, section[id] {
       padding: 6rem 0;
       position: relative;
+      scroll-margin-top: 5rem;
     }
 
     .section-label {
@@ -190,6 +192,55 @@
       width: 2rem;
       height: 1px;
       background: var(--border-subtle);
+    }
+
+    .section-label .section-heading-text,
+    .section-label h2 {
+      font-size: inherit;
+      font-weight: inherit;
+      font-family: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: inherit;
+      margin: 0;
+      display: inline;
+    }
+
+    /* Accessibility screen-reader only utility */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    /* Accessible Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1.5rem;
+      background: var(--teal);
+      color: #08090a;
+      padding: 0.6rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      z-index: 9999;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 1.25rem;
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
     }
 
     /* Header & Navigation */
@@ -370,6 +421,21 @@
 
     .mobile-menu.open { display: flex; }
 
+    .mobile-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      color: var(--emerald);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      width: fit-content;
+      margin-top: 0.5rem;
+    }
+
     /* Animated Hero Section */
     .hero-section {
       min-height: 85vh;
@@ -377,6 +443,7 @@
       align-items: center;
       padding-top: 7rem;
       padding-bottom: 4rem;
+      scroll-margin-top: 5rem;
     }
 
     .hero-grid {
@@ -1258,6 +1325,35 @@
       transform: translateY(-1px);
     }
 
+    .github-achievements {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.85rem;
+    }
+
+    .github-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .github-badge:hover {
+      border-color: var(--teal);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
     /* Heatmap Container (Horizontally Scrollable on Small Screens) */
     .heatmap-wrapper {
       padding: 1.5rem;
@@ -1363,7 +1459,7 @@
     /* Live Public Repos Cards */
     .repos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: 1.25rem;
       margin-top: 1rem;
     }
@@ -1572,6 +1668,30 @@
       font-weight: 300;
     }
 
+    .contact-collab-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding: 0.6rem 0.95rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .contact-collab-note .collab-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--teal);
+    }
+
     .contact-cards-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1590,9 +1710,11 @@
       gap: 1.25rem;
       text-decoration: none;
       transition: all 0.25s ease;
+      cursor: pointer;
     }
 
-    .contact-link-card:hover {
+    .contact-link-card:hover,
+    .contact-link-card:focus-visible {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(139, 92, 246, 0.4);
       transform: translateY(-3px);
@@ -1850,13 +1972,15 @@
       100% { opacity: 0; transform: scale(0.2) translate(-6px, -4px); }
     }
 
-    a:focus-visible, button:focus-visible {
+    a:focus-visible, button:focus-visible, [tabindex="0"]:focus-visible {
       outline: 2px solid var(--teal);
       outline-offset: 2px;
     }
   </style>
 </head>
 <body>
+  <!-- Accessible Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Ambient Lights & Grid -->
   <div class="ambient-blobs" aria-hidden="true">
@@ -1914,11 +2038,15 @@
       <a href="#github" class="nav-link mobile-link">04 — GitHub Activity</a>
       <a href="#now" class="nav-link mobile-link">05 — Currently</a>
       <a href="#contact" class="nav-link mobile-link">06 — Contact</a>
+      <div class="mobile-status-badge">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Available for opportunities</span>
+      </div>
     </div>
   </header>
 
   <!-- Main Content Container -->
-  <main class="container">
+  <main id="main-content" class="container">
 
     <!-- HERO SECTION -->
     <section id="hero" class="hero-section" aria-label="Introduction">
@@ -1953,11 +2081,11 @@
               <span class="arrow" aria-hidden="true">→</span>
             </a>
             <a href="https://github.com/RavendraPatel09" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
               </svg>
               <span>GitHub</span>
-              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--subtle)">↗</span>
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--subtle)" aria-hidden="true">↗</span>
             </a>
           </div>
 
@@ -2051,7 +2179,7 @@
       <div class="section-label">
         <span class="num">01</span>
         <span class="line"></span>
-        <span>ABOUT</span>
+        <h2 class="section-heading-text">ABOUT</h2>
       </div>
 
       <div class="about-grid">
@@ -2068,27 +2196,27 @@
         </div>
 
         <div class="values-card">
-          <h2 class="values-title">Engineering Values</h2>
+          <h3 class="values-title">Engineering Values</h3>
           <ul class="values-list">
             <li class="value-item">
               <span class="num">01.</span>
               <div>
                 <strong>Truth in Craft</strong><br>
-                Deep understanding of core fundamentals before applying high-level abstractions.
+                Strong fundamentals over shortcuts. Understand the underlying concepts, trade-offs, and reasoning behind the APIs and tools being used.
               </div>
             </li>
             <li class="value-item">
               <span class="num">02.</span>
               <div>
                 <strong>Zero Unnecessary Bloat</strong><br>
-                Typed interfaces, modular components, and lean dependency trees.
+                Prefer clear interfaces, maintainable code, sensible dependencies, and deliberate architectural decisions.
               </div>
             </li>
             <li class="value-item">
               <span class="num">03.</span>
               <div>
                 <strong>User-First Polish</strong><br>
-                WCAG accessibility, fast responsiveness, and refined micro-interactions.
+                Build responsive, accessible interfaces with thoughtful interactions, readable content, and consistent behavior.
               </div>
             </li>
           </ul>
@@ -2135,7 +2263,7 @@
       <div class="section-label">
         <span class="num">02</span>
         <span class="line"></span>
-        <span>SKILLS &bull; TECHNICAL MATRIX</span>
+        <h2 class="section-heading-text">SKILLS &bull; TECHNICAL MATRIX</h2>
       </div>
 
       <div class="skills-wrapper">
@@ -2154,61 +2282,64 @@
 
         <!-- Backend & Systems -->
         <div class="skill-group">
-          <div class="skill-group-title">Backend &amp; APIs</div>
+          <div class="skill-group-title">Backend and APIs</div>
           <div class="badges-grid">
             <div class="skill-badge"><span class="badge-icon">◆</span><span>FastAPI</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Node.js</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Express</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>RESTful API Design</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>REST API design</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>WebSockets</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>JWT Authentication</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>JWT authentication</span></div>
           </div>
         </div>
 
         <!-- Frontend & UI -->
         <div class="skill-group">
-          <div class="skill-group-title">Frontend &amp; UI</div>
+          <div class="skill-group-title">Frontend and UI</div>
           <div class="badges-grid">
             <div class="skill-badge"><span class="badge-icon">◆</span><span>React</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Vite</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Tailwind CSS</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>HTML5 / CSS3</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>HTML5</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>CSS3</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Micro-interactions</span></div>
           </div>
         </div>
 
         <!-- Databases -->
         <div class="skill-group">
-          <div class="skill-group-title">Databases &amp; Storage</div>
+          <div class="skill-group-title">Databases</div>
           <div class="badges-grid">
             <div class="skill-badge"><span class="badge-icon">◆</span><span>PostgreSQL</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>MySQL</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Data Modeling &amp; Schema</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Schema design</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Data modeling</span></div>
           </div>
         </div>
 
-        <!-- Tools & DevOps -->
+        <!-- Tools & Development Environment -->
         <div class="skill-group">
-          <div class="skill-group-title">Tools &amp; Environment</div>
+          <div class="skill-group-title">Tools and Development Environment</div>
           <div class="badges-grid">
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Git</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>GitHub</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>Docker</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Linux / Bash CLI</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Linux</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Bash</span></div>
             <div class="skill-badge"><span class="badge-icon">◆</span><span>VS Code</span></div>
           </div>
         </div>
 
-        <!-- Computer Science -->
+        <!-- Computer Science Fundamentals -->
         <div class="skill-group">
-          <div class="skill-group-title">Computer Science &amp; Core Concepts</div>
+          <div class="skill-group-title">Computer Science Fundamentals</div>
           <div class="badges-grid">
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Data Structures (Trees, Graphs, DP)</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Algorithms &amp; Optimization</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>DBMS Architecture</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Object-Oriented Programming</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>System Design Basics</span></div>
-            <div class="skill-badge"><span class="badge-icon">◆</span><span>Web Accessibility (WCAG)</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Data structures and algorithms</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Complexity analysis</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Database management systems</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>Object-oriented programming</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>System design fundamentals</span></div>
+            <div class="skill-badge"><span class="badge-icon">◆</span><span>WCAG accessibility principles</span></div>
           </div>
         </div>
       </div>
@@ -2219,16 +2350,16 @@
       <div class="section-label">
         <span class="num">03</span>
         <span class="line"></span>
-        <span>SELECTED WORK</span>
+        <h2 class="section-heading-text">SELECTED WORK</h2>
       </div>
 
       <div class="projects-header">
         <h2 class="projects-title">Projects &amp; Architectures</h2>
         <div class="filter-pills" role="tablist" aria-label="Filter Projects">
-          <button class="filter-btn active" data-filter="all">All (8)</button>
-          <button class="filter-btn" data-filter="fullstack">Full-Stack</button>
-          <button class="filter-btn" data-filter="backend">Backend &amp; Systems</button>
-          <button class="filter-btn" data-filter="ai-algo">AI &amp; Algorithms</button>
+          <button class="filter-btn active" role="tab" aria-selected="true" data-filter="all">All (8)</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="fullstack">Full-Stack</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="backend">Backend &amp; Systems</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="ai-algo">AI &amp; Algorithms</button>
         </div>
       </div>
 
@@ -2418,14 +2549,17 @@
               <span class="project-category">Algorithms &amp; Core</span>
             </div>
             <div class="project-links">
-              <a href="https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp" target="_blank" rel="noopener noreferrer" class="link-btn code" aria-label="View Complete DSA on GitHub">
-                <span>GitHub →</span>
+              <a href="https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp" target="_blank" rel="noopener noreferrer" class="link-btn code" aria-label="View Complete DSA in C++ on GitHub">
+                <span>C++ Repo →</span>
+              </a>
+              <a href="https://github.com/RavendraPatel09/Complete-DSA-using-python" target="_blank" rel="noopener noreferrer" class="link-btn code" aria-label="View Complete DSA in Python on GitHub">
+                <span>Python Repo →</span>
               </a>
             </div>
           </div>
           <div>
             <h3 class="project-name">Complete DSA in C++ &amp; Python</h3>
-            <p class="project-desc">Comprehensive repository of modular data structure implementations (Trees, Graphs, Disjoint Sets, DP, Trie, Heaps) and optimized algorithmic solutions to competitive programming challenges.</p>
+            <p class="project-desc">A learning-in-public initiative containing reference implementations of data structures (Trees, Graphs, Disjoint Sets, DP, Trie, Heaps) and optimized algorithmic solutions in both C++ and Python.</p>
           </div>
           <div class="project-problem">
             <strong>Problem Solved:</strong>
@@ -2505,7 +2639,7 @@
       <div class="section-label">
         <span class="num">04</span>
         <span class="line"></span>
-        <span>GITHUB ACTIVITY</span>
+        <h2 class="section-heading-text">GITHUB ACTIVITY</h2>
       </div>
 
       <div class="github-box">
@@ -2513,9 +2647,23 @@
           <div class="github-profile-left">
             <div class="github-avatar">RP</div>
             <div class="github-titles">
-              <h3>Building in public.</h3>
+              <h3 style="font-size: 1.15rem; font-weight: 600; color: #ffffff;">Building in public.</h3>
               <div class="handle">Ravendra Patel &bull; @RavendraPatel09</div>
               <div class="subtitle">One commit at a time &bull; Open source development</div>
+              <div class="github-achievements" aria-label="Verified GitHub Achievements">
+                <span class="github-badge" title="Verified Quickdraw Achievement on GitHub">
+                  <span class="badge-icon" aria-hidden="true">⚡</span>
+                  <span>Quickdraw</span>
+                </span>
+                <span class="github-badge" title="Verified Pull Shark Achievement on GitHub">
+                  <span class="badge-icon" aria-hidden="true">🦈</span>
+                  <span>Pull Shark</span>
+                </span>
+                <span class="github-badge" title="Verified YOLO Achievement on GitHub">
+                  <span class="badge-icon" aria-hidden="true">🎯</span>
+                  <span>YOLO</span>
+                </span>
+              </div>
             </div>
           </div>
           <a href="https://github.com/RavendraPatel09" target="_blank" rel="noopener noreferrer" class="github-action-btn">
@@ -2537,7 +2685,7 @@
           </div>
 
           <div class="heatmap-footer-row">
-            <span id="heatmap-total-count">1,382 contributions in the last year</span>
+            <span id="heatmap-total-count">1,481 contributions in the last year</span>
             <div class="heatmap-legend" aria-hidden="true">
               <span>Less</span>
               <span class="legend-box" style="background: #18181b;"></span>
@@ -2568,7 +2716,7 @@
       <div class="section-label">
         <span class="num">05</span>
         <span class="line"></span>
-        <span>CURRENTLY &bull; NOW</span>
+        <h2 class="section-heading-text">CURRENTLY &bull; NOW</h2>
       </div>
 
       <div class="currently-grid">
@@ -2577,7 +2725,7 @@
           <div>
             <span class="currently-tag">BUILDING</span>
             <h3 class="currently-title">Full-Stack &amp; AI Platforms</h3>
-            <p class="currently-desc">Developing accessible web solutions like Saksham-AI, healthcare delivery ecosystems with WebSockets, and intelligent utility tools.</p>
+            <p class="currently-desc">Full-stack and AI-powered platforms using React, FastAPI, and TypeScript, focusing on accessible UI workflows and dependable architectures.</p>
           </div>
           <div class="currently-tags">
             <span class="tech-pill">React</span>
@@ -2590,13 +2738,14 @@
         <div class="currently-card">
           <div>
             <span class="currently-tag">LEARNING</span>
-            <h3 class="currently-title">Backend Architecture &amp; Scale</h3>
-            <p class="currently-desc">Deepening knowledge in asynchronous API design, relational data modeling, Redis caching layers, and containerized deployment workflows.</p>
+            <h3 class="currently-title">Backend Architecture &amp; Scalability</h3>
+            <p class="currently-desc">Backend architecture and scalability, PostgreSQL, Docker, REST APIs, Redis caching, cloud architecture, and distributed systems.</p>
           </div>
           <div class="currently-tags">
             <span class="tech-pill">PostgreSQL</span>
             <span class="tech-pill">Docker</span>
             <span class="tech-pill">REST APIs</span>
+            <span class="tech-pill">Redis</span>
           </div>
         </div>
 
@@ -2605,10 +2754,11 @@
           <div>
             <span class="currently-tag">EXPLORING</span>
             <h3 class="currently-title">Algorithms &amp; Micro-Interactions</h3>
-            <p class="currently-desc">Solving competitive programming challenges in C++ &amp; Python while studying motion design and keyboard-accessible UI systems.</p>
+            <p class="currently-desc">Algorithms, C++, Python, accessible UI development, WCAG 2.1, and thoughtful micro-interactions.</p>
           </div>
           <div class="currently-tags">
-            <span class="tech-pill">DSA in C++</span>
+            <span class="tech-pill">Algorithms</span>
+            <span class="tech-pill">C++</span>
             <span class="tech-pill">Python</span>
             <span class="tech-pill">WCAG 2.1</span>
           </div>
@@ -2621,7 +2771,7 @@
       <div class="section-label">
         <span class="num">05.5</span>
         <span class="line"></span>
-        <span>PROCESS &bull; HOW WE MOVE</span>
+        <h2 class="section-heading-text">PROCESS &bull; HOW WE MOVE</h2>
       </div>
 
       <div class="process-grid">
@@ -2651,7 +2801,7 @@
       <div class="section-label">
         <span class="num">06</span>
         <span class="line"></span>
-        <span>CONTACT &bull; INQUIRIES</span>
+        <h2 class="section-heading-text">CONTACT &bull; INQUIRIES</h2>
       </div>
 
       <div class="contact-box">
@@ -2660,6 +2810,10 @@
           <p class="contact-sub">
             If you have an idea, project, opportunity, or just want to talk about technology, I’d love to hear from you.
           </p>
+          <div class="contact-collab-note">
+            <span class="collab-dot" aria-hidden="true"></span>
+            <span>Open to open-source collaboration — always happy to discuss DSA, problem-solving, database design, and backend architecture.</span>
+          </div>
         </div>
 
         <div class="contact-cards-row">
@@ -3086,10 +3240,17 @@
         },
         {
           name: "Complete-DSA-Using-Cpp",
-          description: "Modular implementations of core Data Structures and competitive programming algorithms.",
+          description: "Modular implementations of core Data Structures and competitive programming algorithms in C++.",
           language: "C++",
           html_url: "https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp",
           updated_at: "2026-07-27"
+        },
+        {
+          name: "Complete-DSA-using-python",
+          description: "Data Structures and Algorithms reference implementations and problem-solving in Python.",
+          language: "Python",
+          html_url: "https://github.com/RavendraPatel09/Complete-DSA-using-python",
+          updated_at: "2026-08-01"
         },
         {
           name: "Ai-Resume-analyzer",
@@ -3097,6 +3258,13 @@
           language: "JavaScript",
           html_url: "https://github.com/RavendraPatel09/Ai-Resume-analyzer",
           updated_at: "2026-07-12"
+        },
+        {
+          name: "FindMyStuff",
+          description: "A lost and found campus web application connecting students to recover lost belongings.",
+          language: "JavaScript",
+          html_url: "https://github.com/RavendraPatel09/findmystuff",
+          updated_at: "2026-08-01"
         }
       ];
 
@@ -3110,11 +3278,11 @@
             <a href="${r.html_url}" target="_blank" rel="noopener noreferrer" class="repo-card" aria-label="Repository ${r.name}">
               <div>
                 <div class="repo-name">
-                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                   </svg>
                   <span>${escapeHtml(r.name)}</span>
-                  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtle); margin-left: auto;">↗</span>
+                  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtle); margin-left: auto;" aria-hidden="true">↗</span>
                 </div>
                 <p class="repo-desc">${escapeHtml(r.description || 'Open source software repository by Ravendra Patel.')}</p>
               </div>
@@ -3169,8 +3337,12 @@
 
       btns.forEach(btn => {
         btn.addEventListener('click', () => {
-          btns.forEach(b => b.classList.remove('active'));
+          btns.forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
           btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
 
           const filter = btn.dataset.filter;
           cards.forEach(card => {
@@ -3248,16 +3420,41 @@
 
       if (!toggle || !menu) return;
 
-      toggle.addEventListener('click', () => {
-        const isOpen = menu.classList.toggle('open');
-        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      const closeMenu = () => {
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      };
+
+      const openMenu = () => {
+        menu.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      };
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = menu.classList.contains('open');
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
       });
 
       links.forEach(l => {
-        l.addEventListener('click', () => {
-          menu.classList.remove('open');
-          toggle.setAttribute('aria-expanded', 'false');
-        });
+        l.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menu.classList.contains('open')) {
+          closeMenu();
+          toggle.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)) {
+          closeMenu();
+        }
       });
     }
 
@@ -3266,29 +3463,55 @@
      */
     function initCopyEmail() {
       const card = document.getElementById('copy-email-card');
+      const btnText = document.getElementById('copy-btn-text');
       const email = 'patelsamerth9@gmail.com';
 
       if (!card) return;
 
+      let revertTimer = null;
+
       const performCopy = () => {
-        if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(email).then(() => showToast('Email copied to clipboard!'));
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = email;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          try {
-            document.execCommand('copy');
-            showToast('Email copied to clipboard!');
-          } catch (e) {
-            showToast('Address: patelsamerth9@gmail.com');
+        const onSuccess = () => {
+          showToast('Email copied to clipboard!');
+          if (btnText) {
+            btnText.textContent = 'Address Copied! ✓';
+            clearTimeout(revertTimer);
+            revertTimer = setTimeout(() => {
+              btnText.textContent = 'Click to Copy Address';
+            }, 2500);
           }
-          document.body.removeChild(ta);
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(email)
+            .then(onSuccess)
+            .catch(() => {
+              fallbackCopy(email, onSuccess);
+            });
+        } else {
+          fallbackCopy(email, onSuccess);
         }
+      };
+
+      const fallbackCopy = (text, callback) => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+          const ok = document.execCommand('copy');
+          if (ok) {
+            callback();
+          } else {
+            showToast('Address: ' + text);
+          }
+        } catch (e) {
+          showToast('Address: ' + text);
+        }
+        document.body.removeChild(ta);
       };
 
       card.addEventListener('click', performCopy);
@@ -3300,6 +3523,7 @@
       });
     }
 
+    let toastTimer = null;
     function showToast(msg) {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-text');
@@ -3307,7 +3531,13 @@
 
       if (text) text.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+
+      toast.onclick = () => {
+        clearTimeout(toastTimer);
+        toast.classList.remove('show');
+      };
     }
 
     /**

@@ -123,6 +123,7 @@ const PORTFOLIO_DATA = {
       problem: "Need for clean, documented, and time/space-optimized reference implementations of fundamental computer science concepts.",
       tech: ["C++", "Python", "Data Structures", "Algorithms", "Optimization"],
       github: "https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp",
+      githubPython: "https://github.com/RavendraPatel09/Complete-DSA-using-python",
       demo: null,
       accent: "#A78BFA"
     },

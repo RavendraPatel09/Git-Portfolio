@@ -28,12 +28,12 @@
   3. **Smart Bhopal Backend**: Municipal IoT telemetry & smart city infrastructure ([GitHub](https://github.com/RavendraPatel09/smart_bhopal_backend))
   4. **Tripmate**: All-in-one travel planner with AI itinerary generation ([GitHub](https://github.com/RavendraPatel09/Tripmate))
   5. **AI Resume Analyzer**: ATS scoring & match engine ([GitHub](https://github.com/RavendraPatel09/Ai-Resume-analyzer))
-  6. **Complete DSA in C++ & Python**: Modular algorithmic problem-solving ([GitHub](https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp))
+  6. **Complete DSA in C++ & Python**: Modular algorithmic problem-solving ([C++ Repo](https://github.com/RavendraPatel09/Complete-DSA-Using-Cpp) · [Python Repo](https://github.com/RavendraPatel09/Complete-DSA-using-python))
   7. **Crewly**: Creator & freelancer collaboration network ([GitHub](https://github.com/RavendraPatel09/Crewly))
   8. **Where Is My Milk**: Smart dairy marketplace & ledger ([GitHub](https://github.com/RavendraPatel09/Where-Is-My-Milk))
-- **Resilient GitHub Contribution Heatmap**: Dedicated *"Building in public"* section featuring your GitHub contribution graph with an automatic, styled SVG generator fallback so it never displays a broken image.
-- **Interactive Micro-Interactions**: Custom desktop cursor, card spotlight mouse reflections, smooth scroll-spy navigation, and one-click copy email with feedback toast.
-- **WCAG Accessibility & Reduced Motion**: Full `@media (prefers-reduced-motion: reduce)` support and visible focus outlines.
+- **Resilient GitHub Contribution Heatmap**: Dedicated *"Building in public"* section featuring your live GitHub contribution graph with verified achievements and an automatic SVG generator fallback.
+- **Interactive Micro-Interactions**: Full-screen 2-cat 2D roaming easter egg, card spotlight mouse reflections, smooth scroll-spy navigation, and one-click copy email with feedback toast.
+- **WCAG Accessibility & Reduced Motion**: Full `@media (prefers-reduced-motion: reduce)` support, logical heading tree, and visible focus outlines.
 
 ---
 
