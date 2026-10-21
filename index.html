@@ -1096,7 +1096,18 @@
       box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
     }
 
-    .project-card::before {
+    .project-card,
+    .currently-card,
+    .contact-link-card,
+    .values-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before,
+    .currently-card::before,
+    .contact-link-card::before,
+    .values-card::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -1106,7 +1117,10 @@
       pointer-events: none;
     }
 
-    .project-card:hover::before {
+    .project-card:hover::before,
+    .currently-card:hover::before,
+    .contact-link-card:hover::before,
+    .values-card:hover::before {
       opacity: 1;
     }
 
@@ -1976,6 +1990,312 @@
       outline: 2px solid var(--teal);
       outline-offset: 2px;
     }
+
+    /* Cat Sitting & Interactive Petting State */
+    .running-cat-container {
+      pointer-events: auto !important;
+      cursor: pointer;
+    }
+
+    .running-cat-container.running-cat-sitting .cat-frame {
+      animation: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+
+    .running-cat-container.running-cat-sitting .cat-frame-0 {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .cat-pet-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 15px;
+      line-height: 1;
+      color: #f43f5e;
+      text-shadow: 0 0 8px rgba(244, 63, 94, 0.7);
+      animation: floatUpHeart 0.85s ease-out forwards;
+      user-select: none;
+    }
+
+    @keyframes floatUpHeart {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(0.6); }
+      50% { opacity: 1; transform: translate(-50%, -20px) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -40px) scale(0.85); }
+    }
+
+    /* Command Palette HUD (Cmd+K / ?) */
+    .cmd-k-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: 0.25rem;
+    }
+
+    .cmd-k-trigger:hover,
+    .cmd-k-trigger:focus-visible {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--teal);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .mobile-cmd-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      width: fit-content;
+      transition: all 0.2s ease;
+      margin-top: 0.25rem;
+    }
+
+    .mobile-cmd-trigger:hover {
+      border-color: var(--teal);
+      color: #ffffff;
+    }
+
+    .cmd-palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 7, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 10000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 12vh 1rem 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      visibility: hidden;
+    }
+
+    .cmd-palette-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .cmd-palette-modal {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(17, 17, 20, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(-10px) scale(0.98);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cmd-palette-backdrop.open .cmd-palette-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .cmd-palette-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.95rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cmd-search-icon {
+      color: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .cmd-palette-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .cmd-palette-input::placeholder {
+      color: var(--subtle);
+      font-size: 0.88rem;
+    }
+
+    .cmd-kbd-esc {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--subtle);
+    }
+
+    .cmd-palette-results {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .cmd-group-label {
+      padding: 0.5rem 0.65rem 0.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .cmd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .cmd-item-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .cmd-item-icon {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--teal);
+      width: 16px;
+      text-align: center;
+    }
+
+    .cmd-item-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .cmd-item:hover,
+    .cmd-item.selected {
+      background: rgba(20, 184, 166, 0.1);
+      border-color: rgba(20, 184, 166, 0.25);
+      color: #ffffff;
+    }
+
+    .cmd-item.selected .cmd-item-badge {
+      color: var(--teal);
+      background: rgba(20, 184, 166, 0.15);
+    }
+
+    .cmd-palette-footer {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 0.65rem 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(8, 9, 10, 0.4);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+    }
+
+    .cmd-footer-kbd {
+      padding: 0.15rem 0.35rem;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+      margin-right: 0.25rem;
+    }
+
+    .cmd-empty {
+      padding: 1.75rem 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--subtle);
+    }
+
+    /* Print / PDF Export Stylesheet */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111111 !important;
+      }
+      .site-header,
+      .ambient-blobs,
+      .ambient-grid,
+      .reading-progress,
+      #running-cats-layer,
+      .mobile-toggle,
+      .cmd-k-trigger,
+      .filter-pills,
+      .toast,
+      .skip-link,
+      .cmd-palette-backdrop {
+        display: none !important;
+      }
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .section {
+        padding: 2rem 0 !important;
+        page-break-inside: avoid;
+      }
+      .hero-section {
+        min-height: 0 !important;
+        padding-top: 1rem !important;
+      }
+      .project-card,
+      .currently-card,
+      .values-card,
+      .github-box {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #111111 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+      .project-desc, .currently-desc, .value-item div, .about-bio {
+        color: #334155 !important;
+      }
+      a {
+        color: #0f766e !important;
+        text-decoration: underline !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2021,6 +2341,11 @@
           <span>Available for opportunities</span>
         </div>
 
+        <!-- Command Palette Quick Trigger -->
+        <button id="cmd-k-trigger" class="cmd-k-trigger" aria-label="Open Command Menu (⌘K or ?)" title="Command Menu (⌘K or ?)">
+          <span>⌘K</span>
+        </button>
+
         <!-- Mobile Toggle Button -->
         <button id="mobile-toggle" class="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2042,6 +2367,10 @@
         <span class="status-dot" aria-hidden="true"></span>
         <span>Available for opportunities</span>
       </div>
+      <button id="mobile-cmd-trigger" class="mobile-cmd-trigger" aria-label="Open Command Menu">
+        <span style="color: var(--teal);" aria-hidden="true">⌘K</span>
+        <span>Command Menu</span>
+      </button>
     </div>
   </header>
 
@@ -2888,6 +3217,28 @@
     <span id="toast-text">Email copied to clipboard!</span>
   </div>
 
+  <!-- Command Palette HUD (Cmd+K / ?) -->
+  <div id="cmd-palette-backdrop" class="cmd-palette-backdrop" aria-hidden="true">
+    <div id="cmd-palette-modal" class="cmd-palette-modal" role="dialog" aria-modal="true" aria-label="Command Menu">
+      <div class="cmd-palette-header">
+        <svg class="cmd-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input id="cmd-palette-input" class="cmd-palette-input" type="text" placeholder="Type a command or search projects..." autocomplete="off" spellcheck="false" aria-label="Search commands or projects" />
+        <kbd class="cmd-kbd-esc">ESC</kbd>
+      </div>
+      <div id="cmd-palette-results" class="cmd-palette-results" role="listbox">
+        <!-- Dynamically populated -->
+      </div>
+      <div class="cmd-palette-footer">
+        <span class="cmd-footer-item"><kbd class="cmd-footer-kbd">↑</kbd><kbd class="cmd-footer-kbd">↓</kbd> navigate</span>
+        <span class="cmd-footer-item"><kbd class="cmd-footer-kbd">↵</kbd> select</span>
+        <span class="cmd-footer-item"><kbd class="cmd-footer-kbd">esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
+
   <!-- EMBEDDED VANILLA JAVASCRIPT -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -2927,6 +3278,12 @@
 
       // 12. Reading progress indicator
       initReadingProgress();
+
+      // 13. Developer Command Palette HUD (Cmd+K / ?)
+      initCommandPalette();
+
+      // 14. Interactive Developer Console API
+      initDevConsole();
     });
 
     /**
@@ -2996,6 +3353,25 @@
       const tooltip = document.getElementById('heatmap-tooltip');
       if (!container) return;
 
+      const CACHE_KEY = 'rp_github_heatmap_data';
+      const CACHE_TIME_KEY = 'rp_github_heatmap_time';
+      const TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+      let renderedFromCache = false;
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+        if (cached && cachedTime && (Date.now() - Number(cachedTime) < TTL_MS)) {
+          const cachedData = JSON.parse(cached);
+          if (cachedData && cachedData.weeks && cachedData.weeks.length > 0) {
+            renderRealHeatmap(cachedData, container, yearLabel, totalLabel, tooltip);
+            renderedFromCache = true;
+          }
+        }
+      } catch (e) {
+        /* Ignore storage errors */
+      }
+
       try {
         const res = await fetch('./github-contributions.json');
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
@@ -3004,9 +3380,15 @@
           throw new Error('Malformed contribution data');
         }
         renderRealHeatmap(data, container, yearLabel, totalLabel, tooltip);
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+          localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+        } catch (e) {}
       } catch (err) {
-        console.warn('Unable to load ./github-contributions.json, using fallback calendar:', err);
-        renderFallbackHeatmap(container, yearLabel, totalLabel, tooltip);
+        if (!renderedFromCache) {
+          console.warn('Unable to load ./github-contributions.json, using fallback calendar:', err);
+          renderFallbackHeatmap(container, yearLabel, totalLabel, tooltip);
+        }
       }
     }
 
@@ -3737,9 +4119,33 @@
         cat.element = container;
         cat.inner = inner;
 
+        // Interactive hover stop & click-to-pet
+        container.setAttribute('title', 'Click to pet, hover to pause');
+        container.addEventListener('mouseenter', () => {
+          cat.isHovered = true;
+        });
+        container.addEventListener('mouseleave', () => {
+          cat.isHovered = false;
+          container.classList.remove('running-cat-sitting');
+        });
+        container.addEventListener('click', (e) => {
+          e.stopPropagation();
+          spawnCatHeart(cat.x + cat.size / 2, cat.y);
+        });
+
         // Set initial transform
         container.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
         if (cat.facing === 'left') container.classList.add('running-cat-facing-left');
+      }
+
+      function spawnCatHeart(x, y) {
+        const heart = document.createElement('div');
+        heart.className = 'cat-pet-heart';
+        heart.textContent = '♥';
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 850);
       }
 
       const isMobile = vw < 640;
@@ -3795,7 +4201,35 @@
 
       const cats = [cat1, cat2];
 
+      let isCatsGloballyPaused = false;
+      window.toggleCatsPause = function(force) {
+        isCatsGloballyPaused = typeof force === 'boolean' ? force : !isCatsGloballyPaused;
+        cats.forEach(c => {
+          c.isPaused = isCatsGloballyPaused;
+          if (c.element) {
+            if (isCatsGloballyPaused) c.element.classList.add('running-cat-sitting');
+            else c.element.classList.remove('running-cat-sitting');
+          }
+        });
+        return isCatsGloballyPaused;
+      };
+
       function updateCat(cat, otherCat, dt, now) {
+        // 0. Hover / Global Pause check: decelerate and sit
+        if (cat.isHovered || cat.isPaused || isCatsGloballyPaused) {
+          cat.vx *= 0.84;
+          cat.vy *= 0.84;
+          if (Math.hypot(cat.vx, cat.vy) < 4) {
+            cat.vx = 0;
+            cat.vy = 0;
+            cat.element.classList.add('running-cat-sitting');
+          }
+          cat.element.style.transform = `translate3d(${cat.x.toFixed(1)}px, ${cat.y.toFixed(1)}px, 0)`;
+          return;
+        } else {
+          cat.element.classList.remove('running-cat-sitting');
+        }
+
         // 1. Organic Wander Intention
         if (now > cat.nextTurnTime) {
           const angleShift = (Math.random() - 0.5) * Math.PI * 1.15;
@@ -3914,6 +4348,313 @@
           animFrameId = requestAnimationFrame(animationLoop);
         }
       });
+    }
+
+    /**
+     * 13. Developer Command Palette HUD (Cmd+K / ?)
+     */
+    function initCommandPalette() {
+      const backdrop = document.getElementById('cmd-palette-backdrop');
+      const modal = document.getElementById('cmd-palette-modal');
+      const input = document.getElementById('cmd-palette-input');
+      const resultsContainer = document.getElementById('cmd-palette-results');
+      const triggerBtn = document.getElementById('cmd-k-trigger');
+      const mobileTriggerBtn = document.getElementById('mobile-cmd-trigger');
+
+      if (!backdrop || !modal || !input || !resultsContainer) return;
+
+      const COMMANDS = [
+        // Navigation
+        { group: 'Navigation', icon: '→', title: 'Jump to Hero', desc: 'Home & Introduction', action: () => scrollToSection('hero') },
+        { group: 'Navigation', icon: '→', title: 'Jump to About', desc: 'Background & Engineering Values', action: () => scrollToSection('about') },
+        { group: 'Navigation', icon: '→', title: 'Jump to Skills', desc: 'Languages, Backend, Frontend & CS Fundamentals', action: () => scrollToSection('skills') },
+        { group: 'Navigation', icon: '→', title: 'Jump to Selected Work', desc: '8 Curated Projects & Architectures', action: () => scrollToSection('projects') },
+        { group: 'Navigation', icon: '→', title: 'Jump to GitHub Activity', desc: 'Live Heatmap & Verified Badges', action: () => scrollToSection('github') },
+        { group: 'Navigation', icon: '→', title: 'Jump to Currently', desc: 'What I am Building, Learning & Exploring', action: () => scrollToSection('now') },
+        { group: 'Navigation', icon: '→', title: 'Jump to Process', desc: 'Engineering Architecture & Workflow', action: () => scrollToSection('process') },
+        { group: 'Navigation', icon: '→', title: 'Jump to Contact', desc: 'Get in touch & collaboration', action: () => scrollToSection('contact') },
+
+        // Projects
+        { group: 'Projects', icon: '◆', badge: 'AI Platform', title: 'Saksham-Ai', desc: 'Assistive multimodal interface for disabled individuals', action: () => scrollToProject('saksham') },
+        { group: 'Projects', icon: '◆', badge: 'Full-Stack', title: 'Medi-connect / MedicalRapidGo', desc: 'Emergency medical booking with real-time WebSockets', action: () => scrollToProject('medi-connect') },
+        { group: 'Projects', icon: '◆', badge: 'Backend', title: 'Smart Bhopal Backend', desc: 'Municipal telemetry & civic issue dispatch engine', action: () => scrollToProject('smart_bhopal') },
+        { group: 'Projects', icon: '◆', badge: 'Full-Stack', title: 'Tripmate', desc: 'AI-assisted travel itinerary planner with cost ledger', action: () => scrollToProject('tripmate') },
+        { group: 'Projects', icon: '◆', badge: 'AI / Tool', title: 'AI Resume Analyzer', desc: 'ATS resume heuristics & match evaluation scoring', action: () => scrollToProject('resume') },
+        { group: 'Projects', icon: '◆', badge: 'Algorithms', title: 'Complete DSA in C++ & Python', desc: 'Core data structures and algorithms public repo', action: () => scrollToProject('dsa') },
+        { group: 'Projects', icon: '◆', badge: 'Full-Stack', title: 'Crewly', desc: 'Creative team collaboration platform', action: () => scrollToProject('crewly') },
+        { group: 'Projects', icon: '◆', badge: 'Full-Stack', title: 'Where Is My Milk', desc: 'Daily dairy inventory & micro-delivery tracking', action: () => scrollToProject('milk') },
+
+        // Actions
+        { group: 'Actions', icon: '✉', badge: 'Email', title: 'Copy Email Address', desc: 'patelsamerth9@gmail.com', action: () => copyEmailDirect() },
+        { group: 'Actions', icon: '🐾', badge: 'Easter Egg', title: 'Pause / Resume Roaming Cats', desc: 'Toggle the 2 running white pixel cats (or press P)', action: () => toggleCatsDirect() },
+        { group: 'Actions', icon: '↗', badge: 'External', title: 'Open GitHub Profile', desc: 'github.com/RavendraPatel09', action: () => window.open('https://github.com/RavendraPatel09', '_blank', 'noopener,noreferrer') },
+        { group: 'Actions', icon: '↗', badge: 'External', title: 'Open LinkedIn Profile', desc: 'linkedin.com/in/ravendra-patel-3bb375338', action: () => window.open('https://linkedin.com/in/ravendra-patel-3bb375338', '_blank', 'noopener,noreferrer') }
+      ];
+
+      let selectedIndex = 0;
+      let currentFiltered = [...COMMANDS];
+
+      function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function scrollToProject(query) {
+        const cards = document.querySelectorAll('.project-card');
+        for (const card of cards) {
+          const text = card.textContent.toLowerCase();
+          if (text.includes(query.toLowerCase())) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.style.outline = '2px solid var(--teal)';
+            card.style.outlineOffset = '4px';
+            setTimeout(() => {
+              card.style.outline = '';
+              card.style.outlineOffset = '';
+            }, 2200);
+            break;
+          }
+        }
+      }
+
+      function copyEmailDirect() {
+        const email = 'patelsamerth9@gmail.com';
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(email).then(() => showToast('Email copied to clipboard!'));
+        } else {
+          showToast('Email: ' + email);
+        }
+      }
+
+      function toggleCatsDirect() {
+        if (window.toggleCatsPause) {
+          const paused = window.toggleCatsPause();
+          showToast(paused ? 'Cats paused 🐾' : 'Cats resumed 🐾');
+        }
+      }
+
+      function renderList(items) {
+        resultsContainer.innerHTML = '';
+        if (items.length === 0) {
+          resultsContainer.innerHTML = '<div class="cmd-empty">No matching commands or projects found.</div>';
+          return;
+        }
+
+        let currentGroup = '';
+        items.forEach((item, index) => {
+          if (item.group !== currentGroup) {
+            currentGroup = item.group;
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'cmd-group-label';
+            groupHeader.textContent = currentGroup;
+            resultsContainer.appendChild(groupHeader);
+          }
+
+          const row = document.createElement('div');
+          row.className = 'cmd-item' + (index === selectedIndex ? ' selected' : '');
+          row.setAttribute('role', 'option');
+          row.setAttribute('aria-selected', index === selectedIndex ? 'true' : 'false');
+          row.dataset.index = index;
+
+          row.innerHTML = `
+            <div class="cmd-item-left">
+              <span class="cmd-item-icon" aria-hidden="true">${item.icon}</span>
+              <div>
+                <span style="font-weight: 500; color: #ffffff;">${escapeHtml(item.title)}</span>
+                <span style="font-size: 0.78rem; color: var(--subtle); margin-left: 0.4rem;">${escapeHtml(item.desc)}</span>
+              </div>
+            </div>
+            ${item.badge ? `<span class="cmd-item-badge">${escapeHtml(item.badge)}</span>` : ''}
+          `;
+
+          row.addEventListener('click', () => {
+            closePalette();
+            item.action();
+          });
+
+          row.addEventListener('mouseenter', () => {
+            selectedIndex = index;
+            updateSelection();
+          });
+
+          resultsContainer.appendChild(row);
+        });
+
+        scrollSelectedIntoView();
+      }
+
+      function updateSelection() {
+        const rows = resultsContainer.querySelectorAll('.cmd-item');
+        rows.forEach((r, i) => {
+          const isSelected = i === selectedIndex;
+          r.classList.toggle('selected', isSelected);
+          r.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+        scrollSelectedIntoView();
+      }
+
+      function scrollSelectedIntoView() {
+        const selected = resultsContainer.querySelector('.cmd-item.selected');
+        if (selected) {
+          selected.scrollIntoView({ block: 'nearest' });
+        }
+      }
+
+      function openPalette() {
+        backdrop.classList.add('open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        input.value = '';
+        currentFiltered = [...COMMANDS];
+        selectedIndex = 0;
+        renderList(currentFiltered);
+        setTimeout(() => input.focus(), 60);
+      }
+
+      function closePalette() {
+        backdrop.classList.remove('open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        input.blur();
+      }
+
+      // Keyboard filtering
+      input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        if (!q) {
+          currentFiltered = [...COMMANDS];
+        } else {
+          currentFiltered = COMMANDS.filter(cmd =>
+            cmd.title.toLowerCase().includes(q) ||
+            cmd.desc.toLowerCase().includes(q) ||
+            (cmd.badge && cmd.badge.toLowerCase().includes(q)) ||
+            cmd.group.toLowerCase().includes(q)
+          );
+        }
+        selectedIndex = 0;
+        renderList(currentFiltered);
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (currentFiltered.length > 0) {
+            selectedIndex = (selectedIndex + 1) % currentFiltered.length;
+            updateSelection();
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (currentFiltered.length > 0) {
+            selectedIndex = (selectedIndex - 1 + currentFiltered.length) % currentFiltered.length;
+            updateSelection();
+          }
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (currentFiltered[selectedIndex]) {
+            closePalette();
+            currentFiltered[selectedIndex].action();
+          }
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closePalette();
+        }
+      });
+
+      // Global keyboard shortcuts: Cmd+K, Ctrl+K, ?, P
+      document.addEventListener('keydown', (e) => {
+        const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k';
+        const notInInput = !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+        const isQuestion = e.key === '?' && notInInput;
+        const isP = e.key.toLowerCase() === 'p' && notInInput && !e.metaKey && !e.ctrlKey;
+
+        if (isCmdK || isQuestion) {
+          e.preventDefault();
+          if (backdrop.classList.contains('open')) {
+            closePalette();
+          } else {
+            openPalette();
+          }
+        } else if (isP) {
+          toggleCatsDirect();
+        } else if (e.key === 'Escape' && backdrop.classList.contains('open')) {
+          closePalette();
+        }
+      });
+
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closePalette();
+      });
+
+      if (triggerBtn) triggerBtn.addEventListener('click', openPalette);
+      if (mobileTriggerBtn) {
+        mobileTriggerBtn.addEventListener('click', () => {
+          const menu = document.getElementById('mobile-menu');
+          if (menu) menu.classList.remove('open');
+          openPalette();
+        });
+      }
+    }
+
+    /**
+     * 14. Interactive Developer Console API & Welcome Banner
+     */
+    function initDevConsole() {
+      const banner = `
+%c  ██████╗ ██████╗ 
+  ██╔══██╗██╔══██╗   Ravendra Patel — Software Developer & AI Engineer
+  ██████╔╝██████╔╝   Full-Stack · Systems · AI Platforms
+  ██╔══██╗██╔═══╝    https://github.com/RavendraPatel09
+  ██║  ██║██║        
+  ╚═╝  ╚═╝╚═╝        Welcome to the console! Type ravendra.help() for commands.
+`;
+      console.log(banner, 'color: #14b8a6; font-family: monospace; font-size: 11px; font-weight: bold;');
+
+      window.ravendra = {
+        name: "Ravendra Patel",
+        role: "Software Developer & AI Engineer",
+        github: "https://github.com/RavendraPatel09",
+        email: "patelsamerth9@gmail.com",
+        help: function() {
+          console.table([
+            { Command: "ravendra.projects()", Description: "List all 8 curated portfolio projects" },
+            { Command: "ravendra.skills()", Description: "Display technical skills matrix" },
+            { Command: "ravendra.contact()", Description: "Get direct contact details" },
+            { Command: "ravendra.toggleCats()", Description: "Pause or resume roaming cats" }
+          ]);
+          return "Type any command above to run it.";
+        },
+        projects: function() {
+          console.table([
+            { Name: "Saksham-Ai", Category: "AI Platform", Stack: "React, FastAPI, WebSockets", Demo: "https://saksham-aiapp.vercel.app/" },
+            { Name: "Medi-connect", Category: "Full-Stack", Stack: "Node.js, Express, Leaflet, Socket.io" },
+            { Name: "Smart Bhopal Backend", Category: "Backend", Stack: "FastAPI, PostgreSQL, Redis" },
+            { Name: "Tripmate", Category: "Full-Stack", Stack: "React, Vite, Node.js, AI API" },
+            { Name: "AI Resume Analyzer", Category: "AI / Heuristics", Stack: "JavaScript, ATS Matching, PDF.js" },
+            { Name: "Complete DSA", Category: "Algorithms", Stack: "C++, Python, Data Structures" },
+            { Name: "Crewly", Category: "Full-Stack", Stack: "React, Node.js, MongoDB" },
+            { Name: "Where Is My Milk", Category: "Full-Stack", Stack: "React, Express, PostgreSQL" }
+          ]);
+          return "8 projects loaded.";
+        },
+        skills: function() {
+          console.table([
+            { Category: "Languages", Items: "C++, Python, JavaScript (ES6+), SQL, HTML5, CSS3" },
+            { Category: "Backend & APIs", Items: "FastAPI, Node.js, Express, REST APIs, WebSockets, JWT" },
+            { Category: "Frontend & UI", Items: "React, Vite, Tailwind CSS, Micro-interactions" },
+            { Category: "Databases", Items: "PostgreSQL, MySQL, Schema Design, Data Modeling" },
+            { Category: "Tools", Items: "Git, GitHub, Docker, Linux, Bash, VS Code" },
+            { Category: "CS Fundamentals", Items: "Data Structures, Algorithms, DBMS, OOP, System Design, WCAG" }
+          ]);
+          return "Skills matrix loaded.";
+        },
+        contact: function() {
+          console.log("%cEmail: patelsamerth9@gmail.com | GitHub: https://github.com/RavendraPatel09", "color: #34d399; font-weight: bold;");
+          return "Looking forward to connecting!";
+        },
+        toggleCats: function() {
+          if (window.toggleCatsPause) {
+            return window.toggleCatsPause();
+          }
+          return "Cats easter egg not loaded.";
+        }
+      };
     }
   </script>
 </body>
